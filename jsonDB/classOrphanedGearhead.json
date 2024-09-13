@@ -1,0 +1,171 @@
+{
+    "Name": "Orphaned Gearhead",
+    "KnowledgeRoll": "3d6+2",
+    "PresenceRoll": "3d6-2",
+    "GlitchRoll": "1d4",
+    "ClassStuff":
+    [
+        {
+            "Feature": 
+            {
+                "FeatureText": "You test Knowledge DR10 when you try to repair a piece of tech or to pilot a vehicle, drone or other machine."
+            }
+        }
+    ],
+    "RandomClassStuffText": "You pilot a(n):",
+    "RandomClassStuff":
+    {
+        "1":
+        {
+            "Unit":
+            {
+                "Name": "Semi-autonomous quad-bot",
+                "Description": "With tools including a health scanner and torch. Loyal but with an attitude.",
+                "Damage":
+                {
+                    "Name": "Bite",
+                    "Damage": "1d4",
+                    "FireMode": "remote"
+                },
+                "Armor": "-d2",
+                "Unknown":
+                [
+                    {
+                        "Field": "HP",
+                        "Entry": "Number",
+                        "Value": "1d8+_k"
+                    }
+                ]
+            }
+        },
+        "2":
+        {
+            "Unit":
+            {
+                "Name": "Flying drone",
+                "Description": "Follows basic commands.",
+                "Damage":
+                {
+                    "Name": "Assault Rifle",
+                    "Damage": "d8a",
+                    "FireMode": "remote"
+                },
+                "Armor": "-d6",
+                "Unknown":
+                [
+                    {
+                        "Field": "HP",
+                        "Entry": "Number",
+                        "Value": "1d12+_k"
+                    },
+                    {
+                        "Field": "Mags",
+                        "Entry": "Number",
+                        "Value": "1d4"
+                    }
+                ]
+            }
+        },
+        "3":
+        {
+            "StuffSet":
+            {
+                "Name": "Set of surveillance drones",
+                "StuffList":
+                [
+                    {
+                        "Unit":
+                        {
+                            "ID": "unit_surveillance_drone",
+                            "Description": "Equipped with a camera. 300 M range. Incredibly fragile. An expected corporate espionage tool."
+                        }
+                    },
+                    {
+                        "Unit":
+                        {
+                            "ID": "unit_surveillance_drone",
+                            "Description": "Equipped with a 3D scanner. 300 M range. Incredibly fragile. An expected corporate espionage tool."
+                        }
+                    },
+                    {
+                        "Unit":
+                        {
+                            "ID": "unit_surveillance_drone",
+                            "Description": "Equipped with a heat sensor. 300 M range. Incredibly fragile. An expected corporate espionage tool."
+                        }
+                    }
+                ]
+            }
+        },
+        "4":
+        {
+            "Unit":
+            {
+                "Name": "Prototype crawler drone",
+                "Description": "Can follow advanced commands. Needs a hard reboot after dealing max damage.",
+                "Damage":
+                {
+                    "Name": "Laser Turret",
+                    "Damage": "d12a",
+                    "FireMode": "remote"
+                },
+                "Armor": "-d6",
+                "Unknown":
+                [
+                    {
+                        "Field": "HP",
+                        "Entry": "Number",
+                        "Value": "1d10+_k"
+                    },
+                    {
+                        "Field": "Mags",
+                        "Entry": "Number",
+                        "Value": "1d4"
+                    }
+                ]
+            }
+        },
+        "5":
+        {
+            "Vehicle":
+            {
+                "ID": "vehicle_armor_van",
+                "Description": "Five seats and lined with junk. Has a smuggler's hatch underneath it all. Once a day, test Knowledge DR8 to find the spare part you need to fix any broken tech."
+            }
+        },
+        "6":
+        {
+            "Vehicle":
+            {
+                "Name": "Walking weapons platform",
+                "Description": "Nigh-indestructible, large enough to ride, and janky as hell.",
+                "Damage":
+                {
+                    "Name": "Anti-material battery",
+                    "Damage": "2d10",
+                    "Description": "Destroys most walls, doors, and vehicles with a shot. Has a 2-in-6 chance of breaking down after firing. Takes d4 hours to repair.",
+                    "FireMode": "remote"
+                },
+                "Unknown":
+                [
+                    {
+                        "Field": "Mags",
+                        "Entry": "Number",
+                        "Value": "1d4"
+                    }
+                ]
+            }
+        }
+    },
+    "ClassLore": "People are unreliable. Socially. Physically. Emotionally. Weak bodies and weaker wills. They are worn down, unfixable. Instead, you have mastered emotionless steel and loyal code. You can fix, drive and pilot any machine. Machines, you can trust.",
+    "RandomClassLore":
+    [
+        "You trusted them, and then they disappeared in G0. Looking for an advanced lab rumored to have survived the Incident.",
+        "You trusted them, and then they were proclaimed dead. But you know their soul lives on inside something else.",
+        "You trusted them, and then they were dragged off to a Corp blacksite by an anonymous killteam.",
+        "You trusted them, and then they left you to join up with a roadrunner outfit. They scavenge scrap on the rivers up north.",
+        "You trusted them, and then they bugged out, pursued by rival droners and bots. Waiting out the heat.",
+        "You trusted them, and then they got laid up, comatose in a Central Cy hospital. Allegedly a workshop accident. They're fine as long as there's cash in their account.",
+        "You trusted them, and then they joined Fideistic Transformation and haven't been heard from since."
+    ]
+}

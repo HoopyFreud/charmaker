@@ -1,0 +1,214 @@
+{
+    "Type": "Class",
+    "Name": "Discharged Corp Killer",
+    "ToughnessRoll": "3d6+2",
+    "KnowledgeRoll": "3d6-1",
+    "PresenceRoll": "3d6-1",
+    "ArmorRoll": "1d4+1",
+    "ClassStuff":
+    [
+        {
+            "Feature": 
+            {
+                "FeatureText": "Your autofire tests are always -1DR."
+            }
+        }
+    ],
+    "RandomClassStuffText": "You took something from your employer when you left:",
+    "RandomClassStuff":
+    {
+        "1":
+        {
+            "Weapon":
+            {
+                "Name": "Old-school heavy machine gun",
+                "Damage":
+                {
+                    "Damage": "d12",
+                    "Description": "Breaks down after a damage roll of 1. You can fix it if you get 10 minutes of quiet time.",
+                    "FireMode": ["single","auto"]
+                },
+                "Unknown":
+                [
+                    {
+                        "Field": "Mags",
+                        "Entry": "Number",
+                        "Value": "1d4"
+                    }
+                ]
+            }
+        },
+        "2":
+        {
+            "StuffSet":
+            {
+                "Name": "Prototype Smart™ assault rifle and grenades",
+                "StuffList":
+                [
+                    {
+                        "Weapon":
+                        {
+                            "Name": "Prototype Smart™ assault rifle",
+                            "Description": "Around- the-corner shooting, the-corner shooting, camera sight, grenade camera sight, grenade launcher, the works. launcher, the works.",
+                            "Damage":
+                            [
+                                {
+                                    "Name": "Normal fire",
+                                    "Damage": "1d10",
+                                    "FireMode": ["single","auto"]
+                                },
+                                {
+                                    "Name": "Grenade launcher",
+                                    "Damage": "1d6",
+                                    "Description": "Can hit up to d3 targets.",
+                                    "FireMode": "single",
+                                    "MechDamage": true
+                                }
+                            ],
+                            "Unknown":
+                            [
+                                {
+                                    "Field": "Mags",
+                                    "Entry": "Number",
+                                    "Value": "1d4"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Weapon":
+                        {
+                            "ID": "weapon_hand_grenade",
+                            "Unknown":
+                            [
+                                {
+                                    "Field": "Uses",
+                                    "Entry": "Number",
+                                    "Value": "1d4"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "3":
+        {
+            "StuffSet":
+            {
+                "Name": "Grenades",
+                "StuffList":
+                [
+                    {
+                        "Feature": 
+                        {
+                            "FeatureText": "You throw grenades with -2DR."
+                        }
+                    },
+                    {
+                        "Weapon":
+                        {
+                            "ID": "weapon_hand_grenade",
+                            "Unknown":
+                            [
+                                {
+                                    "Field": "Uses",
+                                    "Entry": "FixedText",
+                                    "Value": "5+_t"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Weapon":
+                        {
+                            "ID": "weapon_flashbang",
+                            "Uses": "5"
+                        }
+                    }
+                ]
+            }
+        },
+        "4":
+        {
+            "Weapon":
+            {
+                "Name": "Heavy laser cannon",
+                "Damage":
+                [
+                    {
+                        "Damage": "1d12",
+                        "Description": "Presence DR14 against people, bots and animals.",
+                        "FireMode": "single"
+                    },
+                    {
+                        "Damage": "3d12",
+                        "Description": "Presence DR10 against vehicles, turrets or similar targets.",
+                        "FireMode": "single"
+                    }
+                ],
+                "Unknown":
+                [
+                    {
+                        "Field": "Mags",
+                        "Entry": "Number",
+                        "Value": "1d4"
+                    }
+                ]
+            }
+        },
+        "5":
+        {
+            "Weapon":
+            {
+                "Name": "Crowd-control air cannon",
+                "Damage":
+                {
+                    "Damage": "1d6",
+                    "Description": "Can hit up to d3 targets close to each other.",
+                    "FireMode": "single"
+                },
+                "Unknown":
+                [
+                    {
+                        "Field": "Mags",
+                        "Entry": "Number",
+                        "Value": "1d4"
+                    }
+                ]
+            }
+        },
+        "6":
+        {
+            "Weapon":
+            {
+                "Name": "Incendiary shotgun",
+                "Damage":
+                {
+                    "Damage": "1d10",
+                    "Description": "Test Agility DR12 or flammable materials are ignited for +d6 damage the following round.",
+                    "FireMode": "single"
+                },
+                "Unknown":
+                [
+                    {
+                        "Field": "Mags",
+                        "Entry": "Number",
+                        "Value": "1d4"
+                    }
+                ]
+            }
+        }
+    },
+    "ClassLore": "A good soldier in bad company, always fighting someone else's war in the name of greed. Capitalism crushed your enthusiasm quickly enough, and you were discharged without severance. The Corp wants you dead.",
+    "RandomClassLore":
+    [
+        "Your deployment: Urban infiltration in Cy Central. You know the area well.",
+        "Your deployment: Orbital station grunt. Zero-G wall breaches and airlock executions were your idea of fun.",
+        "Your deployment: Maritime raider. Blowing up drilling rigs, underwater labs and the occasional ship.",
+        "Your deployment: Mobile wasteland rig corps. Mowing down roadrunners, sabotaging rival infrastructure, burning what little nature was left.",
+        "Your deployment: Periglacial SecCorp. Plundering released gas and bioweapons for your employer.",
+        "Your deployment: Didn't get that far. Washed out.",
+        "Your deployment: Cloud Palace Guard. Babysitting Immortals and NuAristrocrats as they held court high up in the clouds."
+    ]
+}

@@ -1,0 +1,150 @@
+{
+    "Name": "Forsaken Gang-Goon",
+    "StrengthRoll": "3d6-2",
+    "GlitchRoll": "1d3",
+    "HPRoll": "1d6+_t",
+    "WeaponRoll": "1d6",
+    "ArmorRoll": "1d2",
+    "ClassStuff":
+    [
+        {
+            "Feature": 
+            {
+                "FeatureText": "All Presence and Agility tests are -2DR."
+            }
+        }
+    ],
+    "RandomClassStuffText": "Your specialty was:",
+    "RandomClassStuff":
+    {
+        "1":
+        {
+            "Feature": 
+            {
+                "Name": "Hits",
+                "FeatureText": "When attacking from surprise, test Agility DR10. On a success, you hit once with a melee weapon, dealing normal damage +3."
+            }
+        },
+        "2":
+        {
+            "Feature": 
+            {
+                "Name": "Brawls",
+                "FeatureText": "Test Agility DR14 to sucker punch an opponent in melee. Deal normal damage and give all allies -2DR on their next attack against the same enemy."
+            }
+        },
+        "3":
+        {
+            "StuffSet":
+            {
+                "Name": "BnE",
+                "StuffList":
+                [
+                    {
+                        "Feature": 
+                        {
+                            "FeatureText": "You have a talent for opening doors and getting inside buildings. Test Agility DR10 to pick any mechanical lock or Knowledge DR10 for any electronic lock."
+                        }
+                    },
+                    {
+                        "Item":
+                        {
+                            "ID": "item_lockpicks_physical"
+                        }
+                    },
+                    {
+                        "Item":
+                        {
+                            "ID": "item_lockpicks_electronic"
+                        }
+                    }
+                ]
+            }
+        },
+        "4":
+        {
+            "Feature": 
+            {
+                "Name": "Fencing",
+                "FeatureText": "You know potential buyers for almost anything. Once per day, you can test Presence DR12 to remember the name of a person in Cy who might be willing and able to buy whatever illicit goods have fallen into your hands."
+            }
+        },
+        "5":
+        {
+            "StuffSet":
+            {
+                "Name": "Cleanup",
+                "StuffList":
+                [
+                    {
+                        "Feature": 
+                        {
+                            "FeatureText": "You know how to clean up evidence from a crime scene. You get -4DR when you do."
+                        }
+                    },
+                    {
+                        "Item":
+                        {
+                            "ID": "item_dna_bomb",
+                            "Uses": "2"
+                        }
+                    },
+                    {
+                        "Item":
+                        {
+                            "Name": "Bottle of acid"
+                        }
+                    }
+                ]
+            }
+        },
+        "6":
+        {
+            "Feature": 
+            {
+                "Name": "Assaults",
+                "FeatureText": "With a weapon in each hand, you can make a second attack each round at DR14."
+            }
+        },
+        "7":
+        {
+            "StuffSet":
+            {
+                "Name": "Distraction",
+                "StuffList":
+                [
+                    {
+                        "Feature": 
+                        {
+                            "FeatureText": "You know how to make a scene and then disappear. You get -4DR when you do."
+                        }
+                    },
+                    {
+                        "Weapon":
+                        {
+                            "ID": "weapon_flashbang",
+                            "Uses": "2"
+                        }
+                    },
+                    {
+                        "Item":
+                        {
+                            "ID": "item_optic_camo"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "ClassLore": "You ran with the only gang to have your back and treat you like more than slum trash. They were your family, and you bled, stole, fought and killed for them. They're gone now, so you have to keep your edge.",
+    "RandomClassLore":
+    [
+        "Your gang was taken out by a rival gang. They think you are dead too.",
+        "Your gang got hauled off. Cops thought you were just a punk kid. Nobody ratted you out.",
+        "Your gang betrayed you. Left you for dead in the gutter. They don't know you survived.",
+        "Your gang wandered off into G0 with a newfound religious fervor. They left you and a few other skeptics behind.",
+        "Your gang broke the only rules that separate a criminal from a monster. You left on bad terms.",
+        "Your gang threw you out for breaking the code. They'll kill you if they see you again.",
+        "Your gang fell apart due to violent internal conflicts. There are at least 3 different gangs with their roots in yours, and none of them like you."
+    ]
+}

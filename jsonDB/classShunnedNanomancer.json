@@ -1,0 +1,179 @@
+{
+    "Name": "Shunned Nanomancer",
+    "PresenceRoll": "3d6+2",
+    "ToughnessRoll": "3d6-2",
+    "HPRoll": "1d4+_t",
+    "WeaponRoll": "1d6",
+    "ArmorRoll": "1d2",
+    "StuffReplacement":
+    {
+        "Cyberdeck + Apps":
+        {
+            "RandomItem": 
+            {
+                "Name": "Random Nano",
+                "RandomTable": "RandomNano"
+            }
+        },
+        "Random Cyberware":
+        {
+            "RandomItem": 
+            {
+                "Name": "Random Nano",
+                "RandomTable": "RandomNano"
+            }
+        }
+    },
+    "ClassStuff":
+    [
+        {
+            "RandomItem": 
+            {
+                "Name": "Random Nano",
+                "RandomTable": "RandomNano"
+            }
+        }
+    ],
+    "RandomClassStuffText": "You have:",
+    "RandomClassStuff":
+    {
+        "1":
+        {
+            "Weapon":
+            {
+                "Name": "A strange leaf-looking knife",
+                "Damage":
+                {
+                    "Damage": "1d4",
+                    "Description": "Victims have to test Toughness or bleed 1 HP for d6 rounds.",
+                    "FireMode": ["melee","throw"]
+                }
+            }
+        },
+        "2":
+        {
+            "Cyberware":
+            {
+                "Name": "Milk-white eyes that see through lies",
+                "DescText": "You have milk-white eyes.",
+                "SubStuff":
+                {
+                    "Feature": 
+                    {
+                        "FeatureText": "Once per day, when you believe you've been lied to, test Presence DR8. On a success, you can tell whenever the target lies for the rest of the day."
+                    }
+                }
+            }
+        },
+        "3":
+        {
+            "Cyberware":
+            {
+                "Name": "Rockskin",
+                "Description": "Burnt orange, stone-like skin",
+                "DescText": "You have burnt orange, stone-like skin.",
+                "SubStuff":
+                {
+                    "Feature": 
+                    {
+                        "FeatureText": "-d4 damage taken, not subject to being reduced on a defense fumble. Instead, you take an additional 1d8 damage as part of your skin is ripped off."
+                    }
+                }
+            }
+        },
+        "4":
+        {
+            "Cyberware":
+            {
+                "Name": "An abdominal mouth",
+                "Description": "A second mouth where your navel used to be",
+                "DescText": "You have a second mouth where your navel used to be.",
+                "SubStuff":
+                {
+                    "Feature": 
+                    {
+                        "FeatureText": "Any food or drugs consumed with your navel-mouth are twice as effective."
+                    }
+                }
+            }
+        },
+        "5":
+        {
+            "Cyberware":
+            {
+                "Name": "A crystalline skull",
+                "Description": "An elongated, pointed and semi-translucent skull",
+                "DescText": "You have an elongated, pointed and semi-translucent skull, under which your brain shines, emitting light like a candle",
+                "SubStuff":
+                {
+                    "Feature": 
+                    {
+                        "FeatureText": "Your brain shines underneath, emitting light like that of a candle."
+                    }
+                }
+            }
+        },
+        "6":
+        {
+            "Cyberware":
+            {
+                "Name": "Scales",
+                "Description": "Scales cover most of your body.",
+                "DescText": "Scales cover most of your body.",
+                "SubStuff":
+                {
+                    "Feature": 
+                    {
+                        "FeatureText": "Any roll to resist cold, heat or radiation is -4DR."
+                    }
+                }
+            }
+        },
+        "7":
+        {
+            "Cyberware":
+            {
+                "Name": "Redundant organs",
+                "Description": "A second set of some vital organs.",
+                "SubStuff":
+                {
+                    "Feature": 
+                    {
+                        "FeatureText": "Any hit that would bring you to 0 or less HP has a 50% chance of bringing you to just 1 HP. But any medical bill to restore you to life is doubled."
+                    }
+                }
+            }
+        },
+        "8":
+        {
+            "Cyberware":
+            {
+                "Name": "An extra large body",
+                "Description": "You have an extra large and dense body. You gain d10 additional HP (included). Clothes and armor have to be specially made to order for twice the normal price.",
+                "DescText": "You have an extra large and dense body.",
+                "Unknown":
+                [
+                    {
+                        "Field": "PropChange['pc_hp_max']",
+                        "DispName": "HP Increase",
+                        "Entry": "Number",
+                        "Value": "1d10"
+                    }
+                ]
+            }
+        }
+    },
+    "ClassLore": "It's inside you. Infesting your brain, warping your flesh. People are afraid of you now. They're afraid of the power that poisons you. You're scared too.",
+    "RandomClassLore":
+    [
+        "You got infected when you spent a wild night with a group of neo-pagan cultists, performing profane rites to some snake god.",
+        "You got infected when a star fell close to your building and you were a curious child.",
+        "You got infected when you found drugs. Free drugs. They were neither drugs nor entirely free.",
+        "You got infected when you were kidnapped and subjected to horrible experiments.",
+        "You got infected when a G0 rat bit you.",
+        "You got infected when you were born.",
+        "You got infected when you flatlined in an alley and was brought back by a hooded stranger.",
+        "You got infected when you were subjected to a week long exorcism.",
+        "You got infected when you were locked inside a flooded Laketon basement for 3 days."
+    ]
+}
