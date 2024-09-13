@@ -49,7 +49,7 @@ try {
 
 if ($VENV_DIR -ne '-') {
     if (Test-Path (Join-Path $VENV_DIR 'Scripts\Python.exe')) {
-        $PYTHON = Join-Path $VENV_DIR 'Scripts\Python.exe'
+        & $VENV_DIR\Scripts\Activate.ps1
     } else {
         $PYTHON_FULLNAME = & $PYTHON -c 'import sys; print(sys.executable)'
 
@@ -59,7 +59,7 @@ if ($VENV_DIR -ne '-') {
         & $PYTHON_FULLNAME -m venv $VENV_DIR 2>tmp\stderr.txt | Out-File tmp\stdout.txt
 
         if ($LASTEXITCODE -eq 0) {
-            $PYTHON = Join-Path $VENV_DIR 'Scripts\Python.exe'
+            & $VENV_DIR\Scripts\Activate.ps1
         } else {
             Write-Output "Failed creating VENV: '$VENV_DIR'"
             . ShowStdOutStdErr
