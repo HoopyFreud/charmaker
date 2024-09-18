@@ -1,6 +1,7 @@
 from st_setup import appSetupKeys
 import st_state_change_lib as stc
 import st_function_lib as stl
+import st_render_char_lib as strc
 import build_char as bc
 import streamlit as st
 import copy
@@ -221,5 +222,27 @@ if st.session_state.stage >= 5:
             st.button('Finalize', key = "stuff_finalize", on_click = stc.finalizeStuff, use_container_width=True, disabled=st.session_state.select_disable_stuff)
         with col3:
             pass
-    else:
-        pass
+            
+#FULL CHARACTER SHEET
+if st.session_state.stage < 0:
+    st.markdown('<h1 style="width:100%;text-align:center">'+"You are "+st.session_state.PC.pc_name+'</h1>',unsafe_allow_html=True)
+    
+    st.divider()
+    statList = stl.fieldTableDB["StatTable"]
+    headerString = ""
+    statString = "+"+str(st.session_state.PC.pc_agi) if st.session_state.PC.pc_agi > 0 else str(st.session_state.PC.pc_agi)
+    headerString = headerString + '<div>' + statList[0]+": " + statString + '</div>'
+    statString = "+"+str(st.session_state.PC.pc_knw) if st.session_state.PC.pc_knw > 0 else str(st.session_state.PC.pc_knw)
+    headerString = headerString + '<div>' + statList[1]+": " + statString + '</div>'
+    statString = "+"+str(st.session_state.PC.pc_pre) if st.session_state.PC.pc_pre > 0 else str(st.session_state.PC.pc_pre)
+    headerString = headerString + '<div>' + statList[2]+": " + statString + '</div>'
+    statString = "+"+str(st.session_state.PC.pc_str) if st.session_state.PC.pc_str > 0 else str(st.session_state.PC.pc_str)
+    headerString = headerString + '<div>' + statList[3]+": " + statString + '</div>'
+    statString = "+"+str(st.session_state.PC.pc_tou) if st.session_state.PC.pc_tou > 0 else str(st.session_state.PC.pc_tou)
+    headerString = headerString + '<div>' + statList[4]+": " + statString + '</div>'
+    headerString = headerString + '<div>' + "HP: " +str(st.session_state.PC.pc_hp_current)+"/"+str(st.session_state.PC.pc_hp_max) + '</div>'
+    headerString = headerString + '<div>' + "Glitches: " +str(st.session_state.PC.pc_glitch_current)+" ("+str(st.session_state.PC.pc_glitch_roll)+')</div>'
+    st.markdown('<div style="width:100%;display:flex;justify-content:space-between">'+headerString+'</div>',unsafe_allow_html=True)
+    st.divider()
+    
+    st.write(st.session_state.PC.pc_desc)

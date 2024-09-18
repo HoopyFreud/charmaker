@@ -159,7 +159,7 @@
         }
     },
     "ClassLore": "You were one of the sharpest deckers in Cy. No one could use tech or warp the world with an App like you could. You don't know what went wrong. You messed up. Maybe you were tricked; maybe you got sloppy. You glimpsed a terrible truth, and now you're burnt. No collective, no fallback, nothing.",
-    "RandomClassLorePrompt": "On a deep dive of the Cyber Cosmos, you've found a terrible truth",
+    "RandomClassLorePrompt": "On a deep dive of the Cyber Cosmos, you found out the terrible truth that",
     "RandomClassLore":
     [
         "the public faces of the UCS board are fabricated. They don't exist. Who's running UCS?",

@@ -71,7 +71,7 @@ def finalizeDesc():
 def finalizeStuff():
     valid_stuff = stl.burnPCStuff()
     if valid_stuff:
-        st.session_state.stage = 6
+        st.session_state.stage = -1
         st.session_state.select_disable_class = True
         st.session_state.select_disable_stat = True
         st.session_state.select_disable_secondary_stat = True
