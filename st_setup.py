@@ -12,6 +12,8 @@ def appSetupKeys():
         st.session_state.select_disable_stat = True
     if "select_disable_secondary_stat" not in st.session_state:
         st.session_state.select_disable_secondary_stat = True
+    if "select_disable_desc" not in st.session_state:
+        st.session_state.select_disable_desc = True
     if "select_disable_stuff" not in st.session_state:
         st.session_state.select_disable_stuff = True
         
@@ -48,5 +50,5 @@ def appSetupKeys():
         st.session_state.err_text_stat = False
     if "err_text_secondary_stat" not in st.session_state:
         st.session_state.err_text_secondary_stat = False
-    if "err_text_stuff" not in st.session_state:
-        st.session_state.err_text_stuff = False
+    if "err_text_desc" not in st.session_state:
+        st.session_state.err_text_desc = False

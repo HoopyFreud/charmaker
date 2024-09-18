@@ -137,14 +137,15 @@
         }
     },
     "ClassLore": "You ran with the only gang to have your back and treat you like more than slum trash. They were your family, and you bled, stole, fought and killed for them. They're gone now, so you have to keep your edge.",
+    "RandomClassLorePrompt": "Your gang",
     "RandomClassLore":
     [
-        "Your gang was taken out by a rival gang. They think you are dead too.",
-        "Your gang got hauled off. Cops thought you were just a punk kid. Nobody ratted you out.",
-        "Your gang betrayed you. Left you for dead in the gutter. They don't know you survived.",
-        "Your gang wandered off into G0 with a newfound religious fervor. They left you and a few other skeptics behind.",
-        "Your gang broke the only rules that separate a criminal from a monster. You left on bad terms.",
-        "Your gang threw you out for breaking the code. They'll kill you if they see you again.",
-        "Your gang fell apart due to violent internal conflicts. There are at least 3 different gangs with their roots in yours, and none of them like you."
+        "was taken out by a rival gang. They think you are dead too.",
+        "got hauled off. Cops thought you were just a punk kid. Nobody ratted you out.",
+        "betrayed you. Left you for dead in the gutter. They don't know you survived.",
+        "wandered off into G0 with a newfound religious fervor. They left you and a few other skeptics behind.",
+        "broke the only rules that separate a criminal from a monster. You left on bad terms.",
+        "threw you out for breaking the code. They'll kill you if they see you again.",
+        "fell apart due to violent internal conflicts. There are at least 3 different gangs with their roots in yours, and none of them like you."
     ]
 }

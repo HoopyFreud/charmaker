@@ -142,15 +142,16 @@
         }
     },
     "ClassLore": "You are DEATH incarnate - a frenzied flurry of chrome, murder and blood-stained steel. But yours is no mindless rage. You match your trained and cybernetically enhanced body with an equally disciplined mind. You used to kill for a cause, for an ideal. Now? You kill for money",
+    "RandomClassLorePrompt": "You try to start each day with",
     "RandomClassLore":
     [
-        "You try to start each day with doing yoga and meditating.",
-        "You try to start each day with chugging a mix of carefully selected and measured stimulants.",
-        "You try to start each day with assiduously minding your three favorite plants.",
-        "You try to start each day with obsessively laying out your clothes and cleaning your gear.",
-        "You try to start each day with doing a recreational blood transfusion.",
-        "You try to start each day with strengthening your inner daemon through a chaos magick ritual.",
-        "You try to start each day with calligraphy exercises.",
-        "You try to start each day with an intricate skincare routine."
+        "doing yoga and meditating.",
+        "chugging a mix of carefully selected and measured stimulants.",
+        "assiduously minding your three favorite plants.",
+        "obsessively laying out your clothes and cleaning your gear.",
+        "doing a recreational blood transfusion.",
+        "strengthening your inner daemon through a chaos magick ritual.",
+        "calligraphy exercises.",
+        "an intricate skincare routine."
     ]
 }

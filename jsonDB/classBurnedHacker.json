@@ -158,15 +158,16 @@
             }
         }
     },
-    "ClassLore": "You were one of the sharpest deckers in Cy. No one could use tech or warp the world with an App like you could. You don't know what went wrong. You messed up. Maybe you were tricked; maybe you got sloppy.You glimpsed a terrible truth, and now you're burnt. No collective, no fallback, nothing.",
+    "ClassLore": "You were one of the sharpest deckers in Cy. No one could use tech or warp the world with an App like you could. You don't know what went wrong. You messed up. Maybe you were tricked; maybe you got sloppy. You glimpsed a terrible truth, and now you're burnt. No collective, no fallback, nothing.",
+    "RandomClassLorePrompt": "On a deep dive of the Cyber Cosmos, you've found a terrible truth",
     "RandomClassLore":
     [
-        "On a deep dive of the Cyber Cosmos, you've found a terrible truth: The public faces of the UCS board are fabricated. They don't exist. Who's running UCS?",
-        "On a deep dive of the Cyber Cosmos, you've found a terrible truth: Stealth carrier drones are offloading large amounts of something in G0 on rainy nights.",
-        "On a deep dive of the Cyber Cosmos, you've found a terrible truth: Rogue AI are flocking to Cy, more so than than anywhere else in the world.",
-        "On a deep dive of the Cyber Cosmos, you've found a terrible truth: Nanobacteria is seeping into the Net. What does that even mean? Who's covering it up?",
-        "On a deep dive of the Cyber Cosmos, you've found a terrible truth: Two AIs have merged into a two-headed sentience. Its intelligence is beyond our comprehension.",
-        "On a deep dive of the Cyber Cosmos, you've found a terrible truth: An unknown collective has opened backdoors in Cy's major data nodes. No hackers have claimed credit.",
-        "On a deep dive of the Cyber Cosmos, you've found a terrible truth: Behind a specific door there are other Nets, separate from everything else. They are like different worlds."
+        "the public faces of the UCS board are fabricated. They don't exist. Who's running UCS?",
+        "stealth carrier drones are offloading large amounts of something in G0 on rainy nights.",
+        "rogue AI are flocking to Cy, more so than than anywhere else in the world.",
+        "nanobacteria is seeping into the Net. What does that even mean? Who's covering it up?",
+        "two AIs have merged into a two-headed sentience. Its intelligence is beyond our comprehension.",
+        "an unknown collective has opened backdoors in Cy's major data nodes. No hackers have claimed credit.",
+        "behind a specific door there are other Nets, separate from everything else. They are like different worlds."
     ]
 }

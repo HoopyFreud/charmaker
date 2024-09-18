@@ -201,14 +201,15 @@
         }
     },
     "ClassLore": "A good soldier in bad company, always fighting someone else's war in the name of greed. Capitalism crushed your enthusiasm quickly enough, and you were discharged without severance. The Corp wants you dead.",
+    "RandomClassLorePrompt": "Your deployment was",
     "RandomClassLore":
     [
-        "Your deployment: Urban infiltration in Cy Central. You know the area well.",
-        "Your deployment: Orbital station grunt. Zero-G wall breaches and airlock executions were your idea of fun.",
-        "Your deployment: Maritime raider. Blowing up drilling rigs, underwater labs and the occasional ship.",
-        "Your deployment: Mobile wasteland rig corps. Mowing down roadrunners, sabotaging rival infrastructure, burning what little nature was left.",
-        "Your deployment: Periglacial SecCorp. Plundering released gas and bioweapons for your employer.",
-        "Your deployment: Didn't get that far. Washed out.",
-        "Your deployment: Cloud Palace Guard. Babysitting Immortals and NuAristrocrats as they held court high up in the clouds."
+        "urban infiltration in Cy Central. You know the area well.",
+        "orbital station grunt. Zero-G wall breaches and airlock executions were your idea of fun.",
+        "maritime raider. Blowing up drilling rigs, underwater labs and the occasional ship.",
+        "mobile wasteland rig corps. Mowing down roadrunners, sabotaging rival infrastructure, burning what little nature was left.",
+        "periglacial SecCorp. Plundering released gas and bioweapons for your employer.",
+        "nowhere. You washed out.",
+        "cloud Palace Guard. Babysitting Immortals and NuAristrocrats as they held court high up in the clouds."
     ]
 }

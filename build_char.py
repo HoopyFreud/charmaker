@@ -41,38 +41,44 @@ class PC:
     pc_creds = None
     pc_debt = None
     pc_debt_lender = None
-    pc_features = []
-    pc_items = []
-    pc_weapons = []
-    pc_cyberware = []
-    pc_nanos = []
-    pc_cyberdecks = []
-    pc_apps = []
-    pc_units = []
-    pc_vehicles = []
+    pc_stuff = []
     
 class DamageField:
     p_damage = None
     p_desc = None
     p_firemode = None
-    p_robot_bonus = False
+    p_mech_bonus = False
+    
+class PropChangeField:
+    p_property = None
+    p_value = None
+    p_dispName = None
+    
+    def __init__(self, p_property, p_value, p_dispName):
+        self.p_property = p_property
+        self.p_value = p_value
+        self.p_dispName = p_dispName
+    
+class Stuff:
+    p_name = None
+    p_desc = None
+    p_sub_stuff = None
     
 class Feature:
     p_name = None
-    p_desc = None
-    p_subfeatures = None
-    p_unknown_fields = None
+    p_text = None
     
-class Nano(Feature):
-    p_infest = None
+class Nano(Stuff):
+    pass
 
-class Infestation(Feature):
+class Infestation(Stuff):
     p_pc_desc_text = None
+    p_prop_change = []
     
-class App(Feature):
+class App(Stuff):
     p_damage = None
 
-class Unit(Feature):
+class Unit(Stuff):
     p_damage = None
     p_armor = None
     p_hp_max = None
@@ -81,22 +87,24 @@ class Unit(Feature):
 class Vehicle(Unit):
     pass
 
-class Item(Feature):
+class Item(Stuff):
     p_uses = None
     p_equipped = True
     
-class Weapon(Item):
-    p_mags = None
-    p_damage = None
-    
-class Cyberware(Item):
-    p_pc_desc_text = None
-    p_prop_change = None
-    p_sub_stuff = None
+class Armor(Item):
+    p_armor = None
     
 class Cyberdeck(Item):
     p_slot_max = None
     p_slots = None
+    
+class Cyberware(Item):
+    p_pc_desc_text = None
+    p_prop_change = []
+    
+class Weapon(Item):
+    p_mags = None
+    p_damage = None
     
 class StuffField:
     p_type = None

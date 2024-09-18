@@ -227,6 +227,36 @@
             "Description": "Equipped with multiple customizable injectors, jump jets, motorized joints and more. Not for sale."
         }
     },
+    "cyberdeck_cyberdeck":
+    {
+        "Cyberdeck":
+        {
+            "Name": "Cyberdeck",
+            "Unknown":
+            [
+                {
+                    "Field": "Slots",
+                    "Entry": "Number",
+                    "Value": "_k+1"
+                }
+            ]
+        }
+    },
+    "cyberdeck_cyberdeck_plus":
+    {
+        "Cyberdeck":
+        {
+            "Name": "Cyberdeck+",
+            "Unknown":
+            [
+                {
+                    "Field": "Slots",
+                    "Entry": "Number",
+                    "Value": "_k+4"
+                }
+            ]
+        }
+    },
     "cyberware_cyberclaws":
     {
         "Cyberware":
@@ -380,7 +410,9 @@
             "DescText": "Your muscles bulge.",
             "PropChange":
             {
-                "pc_carrying_max": "4"
+                "Property": "pc_carrying_max",
+                "Value": "4",
+                "DispName": "Carrying Capacity Increase"
             },
             "SubStuff":
             {
@@ -520,7 +552,9 @@
             "Description": "Your skeleton is covered in a thin metal layer. You gain 10 additional HP (included).",
             "PropChange":
             {
-                "pc_hp_max": "10"
+                "Property": "pc_hp_max",
+                "Value": "10",
+                "DispName": "HP Increase"
             }
         }
     },
@@ -709,7 +743,9 @@
             "Trigger": "A sudden vibration. The sound of shattering glass. Extreme pain. You take 1 point of damage for each item you are carrying.",
             "PropChange":
             {
-                "CarryingCapacityMax": "-1"
+                "Property": "pc_carrying_max",
+                "Value": "-1",
+                "DispName": "Carrying Capacity Decrease"
             }
         }
     },

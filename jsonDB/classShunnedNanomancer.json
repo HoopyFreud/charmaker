@@ -154,26 +154,28 @@
                 "Unknown":
                 [
                     {
-                        "Field": "PropChange['pc_hp_max']",
+                        "Field": "PropChange",
+                        "Property": "pc_hp_max",
+                        "Value": "1d10",
                         "DispName": "HP Increase",
-                        "Entry": "Number",
-                        "Value": "1d10"
+                        "Entry": "Number"
                     }
                 ]
             }
         }
     },
     "ClassLore": "It's inside you. Infesting your brain, warping your flesh. People are afraid of you now. They're afraid of the power that poisons you. You're scared too.",
+    "RandomClassLorePrompt": "You got infected when",
     "RandomClassLore":
     [
-        "You got infected when you spent a wild night with a group of neo-pagan cultists, performing profane rites to some snake god.",
-        "You got infected when a star fell close to your building and you were a curious child.",
-        "You got infected when you found drugs. Free drugs. They were neither drugs nor entirely free.",
-        "You got infected when you were kidnapped and subjected to horrible experiments.",
-        "You got infected when a G0 rat bit you.",
-        "You got infected when you were born.",
-        "You got infected when you flatlined in an alley and was brought back by a hooded stranger.",
-        "You got infected when you were subjected to a week long exorcism.",
-        "You got infected when you were locked inside a flooded Laketon basement for 3 days."
+        "you spent a wild night with a group of neo-pagan cultists, performing profane rites to some snake god",
+        "a star fell close to your building and you were a curious child",
+        "you found drugs. Free drugs. They were neither drugs nor entirely free",
+        "you were kidnapped and subjected to horrible experiments",
+        "a G0 rat bit you",
+        "you were born",
+        "you flatlined in an alley and was brought back by a hooded stranger",
+        "you were subjected to a week long exorcism",
+        "you were locked inside a flooded Laketon basement for 3 days"
     ]
 }

@@ -158,14 +158,15 @@
         }
     },
     "ClassLore": "People are unreliable. Socially. Physically. Emotionally. Weak bodies and weaker wills. They are worn down, unfixable. Instead, you have mastered emotionless steel and loyal code. You can fix, drive and pilot any machine. Machines, you can trust.",
+    "RandomClassLorePrompt": "You trusted them, and then they",
     "RandomClassLore":
     [
-        "You trusted them, and then they disappeared in G0. Looking for an advanced lab rumored to have survived the Incident.",
-        "You trusted them, and then they were proclaimed dead. But you know their soul lives on inside something else.",
-        "You trusted them, and then they were dragged off to a Corp blacksite by an anonymous killteam.",
-        "You trusted them, and then they left you to join up with a roadrunner outfit. They scavenge scrap on the rivers up north.",
-        "You trusted them, and then they bugged out, pursued by rival droners and bots. Waiting out the heat.",
-        "You trusted them, and then they got laid up, comatose in a Central Cy hospital. Allegedly a workshop accident. They're fine as long as there's cash in their account.",
-        "You trusted them, and then they joined Fideistic Transformation and haven't been heard from since."
+        "disappeared in G0. Looking for an advanced lab rumored to have survived the Incident.",
+        "were proclaimed dead. But you know their soul lives on inside something else.",
+        "were dragged off to a Corp blacksite by an anonymous killteam.",
+        "left you to join up with a roadrunner outfit. They scavenge scrap on the rivers up north.",
+        "bugged out, pursued by rival droners and bots. Waiting out the heat.",
+        "got laid up, comatose in a Central Cy hospital. Allegedly a workshop accident. They're fine as long as there's cash in their account.",
+        "joined Fideistic Transformation and haven't been heard from since."
     ]
 }
