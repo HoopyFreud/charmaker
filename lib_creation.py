@@ -1,71 +1,8 @@
 import streamlit as st
-import build_char as bc
+import lib_util as lu
+import lib_class_def as lcd
 import numexpr as ne
-import dice
-import re
-import copy
 import json
-import functools
-import random
-
-#dice roller utility functions - add zero to collapse the result to an int instead of a list
-def roll(diceStr, floor = None):
-    roll = dice.roll(diceStr+"+0")
-    if floor:
-        if roll < floor:
-            roll = floor
-    return roll
-    
-def rollMax(diceStr, floor = None):
-    roll = dice.roll_max(diceStr+"+0")
-    if floor:
-        if roll < floor:
-            roll = floor
-    return roll
-    
-def rollMin(diceStr, floor = None):
-    roll = dice.roll_min(diceStr+"+0")
-    if floor:
-        if roll < floor:
-            roll = floor
-    return roll
-
-#map between internal and display names for classes
-def mapClassTable(className):
-    return fieldTableDB["ClassTableDict"][className]
-
-#process strings with special characters and replace them with stat values
-def statifyString(inString):
-    statValNumList = [st.session_state.PC.pc_agi, st.session_state.PC.pc_knw, st.session_state.PC.pc_pre, st.session_state.PC.pc_str, st.session_state.PC.pc_tou]
-    shortStatTable = fieldTableDB["ShortStatTable"]
-    longStatTable = fieldTableDB["StatTable"]
-    for index, statVal in enumerate(statValNumList):
-        sign = "+"
-        invSign = "-"
-        if statVal is None:
-            statValString = longStatTable[index]
-        else:
-            if statVal == 0:
-                statValString = ""
-                sign = ""
-                invSign = ""
-            else:
-                statValString = str(abs(statVal))
-                if statVal < 0:
-                    sign = "-"
-                    invSign = "+"
-        #adding mods
-        inString = re.sub("(\+"+shortStatTable[index]+")",sign+statValString,inString)
-        #subtracting mods
-        inString = re.sub("(-"+shortStatTable[index]+")",invSign+statValString,inString)
-        #mod as the first value
-        inString = re.sub("("+shortStatTable[index]+")",statValString,inString)
-        if statVal is not None:
-            if statVal == 0:
-                inString = re.sub("("+shortStatTable[index]+")","",inString)
-            elif statVal < 0:
-                inString = re.sub("("+shortStatTable[index]+")","-"+statValString,inString)
-    return inString
 
 #calculate the mod value for a given stat roll
 def mapStatMod(stat):
@@ -93,7 +30,7 @@ def burnPCClass():
     if st.session_state.t_char_class:
         try:
             st.session_state.PC.pc_class = st.session_state.t_char_class
-            st.session_state.class_table = processClassTable(getClassObject(mapClassTable(st.session_state.PC.pc_class)))
+            st.session_state.class_table = processClassTable(getClassObject(mapClassTable[st.session_state.PC.pc_class]))
             st.session_state.PC.pc_glitch_roll = st.session_state.class_table["GlitchRoll"]
             return True
         except:
@@ -121,8 +58,8 @@ def burnPCSecondaryStats():
         st.session_state.PC.pc_hp_max, st.session_state.PC.pc_glitch_current, st.session_state.PC.pc_creds, st.session_state.PC.pc_debt = [int(v) for v in c_s_stats]
         st.session_state.PC.pc_hp_max = max(1,st.session_state.PC.pc_hp_max)
         st.session_state.PC.pc_hp_current = st.session_state.PC.pc_hp_max
-        st.session_state.PC.pc_glitch_roll = statifyString(st.session_state.class_table["GlitchRoll"])
-        st.session_state.PC.pc_carrying_max = ne.evaluate(statifyString(st.session_state.class_table["CarryingCapacityRoll"])).item()
+        st.session_state.PC.pc_glitch_roll = lu.statifyString(st.session_state.class_table["GlitchRoll"])
+        st.session_state.PC.pc_carrying_max = ne.evaluate(lu.statifyString(st.session_state.class_table["CarryingCapacityRoll"])).item()
         return True
     except:
         return False
@@ -135,9 +72,9 @@ def burnPCDesc():
         st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.PC.pc_class
         st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + "; " + st.session_state.t_char_feature.lower()
         st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + ", " + st.session_state.t_char_quirk.lower()
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + randomSelectWordTable(wordTableDB["PreFieldObsession"])
+        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + lu.randomSelectWordTable(wordTableDB["PreFieldObsession"])
         st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.t_char_obsession.lower()
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + randomSelectWordTable(wordTableDB["PreFieldDesire"])
+        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + lu.randomSelectWordTable(wordTableDB["PreFieldDesire"])
         st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.t_char_desire.lower()
         st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + ".  \nYou owe money to " + st.session_state.t_char_lender.lower() + "."
         if "RandomClassLore" in st.session_state.class_table:
@@ -152,7 +89,7 @@ def burnPCDesc():
 def burnPCStuff():
     allStuff = []
     if "RandomClassStuff" in st.session_state.class_table.keys():
-        if not addStuffToSheet(allStuff,getObjectFromStuffField(bc.StuffField("RandomItem", None, {}),"RandomClassStuff")):
+        if not addStuffToSheet(allStuff,getObjectFromStuffField(lcd.StuffField("RandomItem", None, {}),"RandomClassStuff")):
             return False
     stuffList = st.session_state.class_table["Stuff"]
     if "ClassStuff" in st.session_state.class_table.keys():
@@ -181,7 +118,7 @@ def traceStuff(key, prefix):
         return None
     tracedObj = getObjectFromStuffField(stuffFieldObj, prefix)
     return tracedObj
-            
+    
 def getObjectFromStuffField(stuff, prefix):
     err = False
     match stuff.p_type:
@@ -196,90 +133,21 @@ def getObjectFromStuffField(stuff, prefix):
             keyName = prefix+"."+stuff.p_data["RandomTable"] if "RandomTable" in stuff.p_data.keys() else prefix
             subPrefix = prefix+"."+stuff.p_data["RandomTable"] if "RandomTable" in stuff.p_data.keys() else prefix+"."+prefix
             return traceStuff(keyName, subPrefix)
-        case "Ammo":
-            stuffObj = bc.Item()
-        case "App":
-            stuffObj = bc.App()
-        case "Armor":
-            stuffObj = bc.Armor()
-        case "Cyberdeck":
-            stuffObj = bc.Cyberdeck()
-        case "Cyberware":
-            stuffObj = bc.Cyberware()
-        case "Drug":
-            stuffObj = bc.Item()
-        case "Infestation":
-            stuffObj = bc.Infestation()
-        case "Item":
-            stuffObj = bc.Item()
-        case "Nano":
-            stuffObj = bc.Nano()
-        case "Unit":
-            stuffObj = bc.Unit()
-        case "Vehicle":
-            stuffObj = bc.Vehicle()
-        case "Weapon":
-            stuffObj = bc.Weapon()
-        case "Feature":
-            stuffObj = bc.Feature()
         case _:
-            st.write("Unknown Stuff Type: "+stuff.p_type)
-            return None
+            stuffObj = lu.generateObjectFromStuffField(stuff)
+            if stuffObj is None:
+                return None
     #look for sub-stuff
     if "SubStuff" in stuff.p_data.keys():
         stuffObj.p_sub_stuff = getObjectFromStuffField(stuff.p_data["SubStuff"], prefix+"."+prefix)
         if not stuffObj.p_sub_stuff:
             err = True
-    #fill out fields
-    if "Damage" in stuff.p_data.keys():
-        stuffObj.p_damage = getDamageObject(stuff.p_data["Damage"])
-        
-    if stuff.p_name:
-        stuffObj.p_name = stuff.p_name
-    if "Description" in stuff.p_data.keys():
-        stuffObj.p_desc = stuff.p_data["Description"]
-        
-    if "Armor" in stuff.p_data.keys():
-        stuffObj.p_armor = stuff.p_data["Armor"]
-    if "DescText" in stuff.p_data.keys():
-        stuffObj.p_pc_desc_text = stuff.p_data["DescText"]
-    if "DamageReduction" in stuff.p_data.keys():
-        stuffObj.p_armor = stuff.p_data["DamageReduction"]
-    if "FeatureText" in stuff.p_data.keys():
-        stuffObj.p_text = stuff.p_data["FeatureText"]
-    if "HP" in stuff.p_data.keys():
-        stuffObj.p_hp_max = fieldValue
-        stuffObj.p_hp_current = fieldValue
-    if "Mags" in stuff.p_data.keys():
-        stuffObj.p_mags = stuff.p_data["Mags"]
-    if "PropChange" in stuff.p_data.keys():
-        stuffObj.p_prop_change.append(bc.PropChangeField(stuff.p_data["PropChange"]["Property"],stuff.p_data["PropChange"]["Value"],stuff.p_data["PropChange"]["DispName"]))
-    if "Slots" in stuff.p_data.keys():
-        stuffObj.p_slot_max = stuff.p_data["Slots"]
-    if "Uses" in stuff.p_data.keys():
-        stuffObj.p_uses = stuff.p_data["Uses"]
-        
     if "Unknown" in stuff.p_data.keys():
         err = getUnknownFieldValues(stuffObj,stuff.p_data["Unknown"],prefix)
     if err:
         return None
     else:
         return stuffObj
-        
-def getDamageObject(damageField):
-    if isinstance(damageField,list):
-        return [getDamageObject(damageEntry) for damageEntry in damageField]
-    else:
-        damageObject = bc.DamageField()
-        if "Damage" in damageField.keys():
-            damageObject.p_damage = damageField["Damage"]
-        if "Description" in damageField.keys():
-            damageObject.p_desc = damageField["Description"]
-        if "FireMode" in damageField.keys():
-            damageObject.p_firemode = damageField["FireMode"]
-        if "MechDamage" in damageField.keys():
-            damageObject.p_mech_bonus = damageField["MechDamage"]
-        return damageObject
         
 def getUnknownFieldValues(stuffObj,unknownPropList,prefix):
     for prop in unknownPropList:
@@ -294,11 +162,11 @@ def getUnknownFieldValues(stuffObj,unknownPropList,prefix):
         if prop["Entry"] == "Number":
             fieldValue = st.session_state["t_"+keyName]
             if fieldValue:
-                fieldValue = ne.evaluate(statifyString(fieldValue)).item()
+                fieldValue = ne.evaluate(lu.statifyString(fieldValue)).item()
         elif prop["Entry"] == "FixedText":
             fieldValue = prop["Value"]
             if fieldValue:
-                fieldValue = ne.evaluate(statifyString(fieldValue)).item()
+                fieldValue = ne.evaluate(lu.statifyString(fieldValue)).item()
         elif prop["Entry"] == "Dropdown":
             fieldValue = st.session_state["t_"+keyName]
         if not fieldValue:
@@ -323,7 +191,7 @@ def getUnknownFieldValues(stuffObj,unknownPropList,prefix):
             case "Mags":
                 stuffObj.p_mags = fieldValue
             case "PropChange":
-                stuffObj.p_prop_change.append(bc.PropChangeField(prop["Property"],fieldValue,prop["DispName"]))
+                stuffObj.p_prop_change.append(lcd.PropChangeField(prop["Property"],fieldValue,prop["DispName"]))
             case "Slots":
                 stuffObj.p_slot_max = fieldValue
             case "Uses":
@@ -335,48 +203,20 @@ def getUnknownFieldValues(stuffObj,unknownPropList,prefix):
 #process all stuff in each class table
 def processClassTable(classTable):
     if "Stuff" in classTable.keys():
-        classTable["Stuff"] = [processStuff(stuffEntry, source = "Stuff") for stuffEntry in classTable["Stuff"]]
+        classTable["Stuff"] = [lu.processStuff(stuffEntry, source = "Stuff") for stuffEntry in classTable["Stuff"]]
     if "ClassStuff" in classTable.keys():
         #we add a number to the source here to ensure that we will be able to set up unique IDs for these fields later. Stuff is already uniquely identified and RandomClassStuff is a single field, so neither of them need it.
-        classTable["ClassStuff"] = [processStuff(stuffEntry, source = "ClassStuff"+"."+str(stuffIndex)) for stuffIndex,stuffEntry in enumerate(classTable["ClassStuff"])]
+        classTable["ClassStuff"] = [lu.processStuff(stuffEntry, source = "ClassStuff"+"."+str(stuffIndex)) for stuffIndex,stuffEntry in enumerate(classTable["ClassStuff"])]
     if "RandomClassStuff" in classTable.keys():
-        classTable["RandomClassStuff"] = {k: processStuff(v, source = "RandomClassStuff") for k,v in classTable["RandomClassStuff"].items()}
+        classTable["RandomClassStuff"] = {k: lu.processStuff(v, source = "RandomClassStuff") for k,v in classTable["RandomClassStuff"].items()}
     if "StuffReplacement" in classTable.keys():
-        classTable["StuffReplacement"] = {k: processStuff(v) for k,v in classTable["StuffReplacement"].items()}
+        classTable["StuffReplacement"] = {k: lu.processStuff(v) for k,v in classTable["StuffReplacement"].items()}
     return classTable
-
-#turn JSON dictionaries into StuffField objects
-def processStuff(stuff, source = None):
-    if not isinstance(stuff, bc.StuffField):
-        stuffType = list(stuff.keys())[0]
-        if "Name" in list(stuff[stuffType].keys()):
-            stuffName = stuff[stuffType].pop("Name")
-        else:
-            stuffName = None
-        if "ID" in list(stuff[stuffType].keys()):
-            #remove the ID field and add all fields in the stuff entry
-            #need to deepcopy here so we don't accidentally change properties of things in stuffDB when we update()
-            stuffFieldObj = copy.deepcopy(stuffDB[stuff[stuffType].pop("ID")])
-            stuffFieldObj.p_data.update(stuff[stuffType])
-            stuffFieldObj.p_source = source
-            if stuffName:
-                stuffFieldObj.p_name = stuffName
-        else:
-            stuffFieldObj =  bc.StuffField(stuffType,stuffName,stuff[stuffType],p_source=source)
-            if stuffFieldObj.p_type == "StuffSet":
-                stuffFieldObj.p_data["StuffList"] = [processStuff(subItem, source = source) for subItem in stuffFieldObj.p_data["StuffList"]]
-            if "SubStuff" in stuffFieldObj.p_data.keys():
-                stuffFieldObj.p_data["SubStuff"] = processStuff(stuffFieldObj.p_data["SubStuff"], source = source)
-    else:
-        stuffFieldObj = stuff
-        if source:
-            stuffFieldObj.p_source = source
-    return stuffFieldObj
 
 #replace a stuff entry with a different stuff entry that should replace it. Stuff replacement is by name.
 def processStuffReplacement(stuffTableEntry):
     if stuffTableEntry.p_name in st.session_state.class_table["StuffReplacement"].keys():
-        stuffTableEntry = processStuff(st.session_state.class_table["StuffReplacement"][stuffTableEntry.p_name], source=stuffTableEntry.p_source)
+        stuffTableEntry = lu.processStuff(st.session_state.class_table["StuffReplacement"][stuffTableEntry.p_name], source=stuffTableEntry.p_source)
     return stuffTableEntry
 
 #Insert a stuff entry into the character builder UI
@@ -398,7 +238,7 @@ def insertStuffEntry(stuff, prefix, customStuffTable = None):
         writeStuffChildStuff(stuff, prefix, customStuffTable)
         #set up the error box
         if st.session_state[errBoxID]:
-            st.error(errTextDB["err_text_stuff"])
+            st.error(lu.errTextDB["err_text_stuff"])
 
 #fixed text is stuff like name and description - no lists, no unknowns, no subfields
 def writeStuffFixedText(stuff):
@@ -467,25 +307,25 @@ def writeStuffUnknownFields(stuff, prefix):
         #select data entry method
         st.write(dispName)
         if prop["Entry"] == "Number":
-            rollString = statifyString(prop["Value"])
+            rollString = lu.statifyString(prop["Value"])
             col1, col2 = st.columns([5,1],vertical_alignment="bottom")
             with col1:
-                st.text_input(dispName, key = "t_"+propKeyName, label_visibility="collapsed", placeholder=rollString, on_change=changeNumInput, args=["t_"+propKeyName,errBoxID], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stuff)
+                st.text_input(dispName, key = "t_"+propKeyName, label_visibility="collapsed", placeholder=rollString, on_change=lu.changeNumInput, args=["t_"+propKeyName,errBoxID], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stuff)
             with col2:
-                st.button('Random', key = propKeyName+"_random", on_click = randomNumber, args=["t_"+propKeyName,rollString], kwargs={"errField": errBoxID,"lowerLimit":1}, disabled=st.session_state.select_disable_stuff)
+                st.button('Random', key = propKeyName+"_random", on_click=lu.randomNumber, args=["t_"+propKeyName,rollString], kwargs={"errField": errBoxID,"lowerLimit":1}, disabled=st.session_state.select_disable_stuff)
             #check for errors on page load
-            errCheck = changeNumInput("t_"+propKeyName,errBoxID,roll = rollString,override=errCheck)
+            errCheck = lu.changeNumInput("t_"+propKeyName,errBoxID,roll = rollString,override=errCheck)
         elif prop["Entry"] == "FixedText":
             with st.container(border=True):
-                st.write(statifyString(prop["Value"]))
+                st.write(lu.statifyString(prop["Value"]))
         elif prop["Entry"] == "Dropdown":
             dropdownList = prop["Value"]
             rollString = "1d"+str(len(dropdownList))
             col1, col2 = st.columns([5,1],vertical_alignment="bottom")
             with col1:
-                st.selectbox(dispName, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry), key="t_"+propKeyName, label_visibility="collapsed", index=None, placeholder=rollString, on_change=resetErrField, args=[errBoxID], disabled=st.session_state.select_disable_stuff)
+                st.selectbox(dispName, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry), key="t_"+propKeyName, label_visibility="collapsed", index=None, placeholder=rollString, on_change=lu.resetErrField, args=[errBoxID], disabled=st.session_state.select_disable_stuff)
             with col2:
-                st.button('Random', key = propKeyName+"_random", on_click = randomSelector, args=["t_"+propKeyName,dropdownList], kwargs={"errField": errBoxID}, disabled=st.session_state.select_disable_stuff)
+                st.button('Random', key = propKeyName+"_random", on_click=lu.randomSelector, args=["t_"+propKeyName,dropdownList], kwargs={"errField": errBoxID}, disabled=st.session_state.select_disable_stuff)
 
 #write subfields - objects within the object
 def writeStuffChildStuff(stuff, prefix, customStuffTable):
@@ -513,7 +353,7 @@ def writeStuffChildStuff(stuff, prefix, customStuffTable):
         #restrict the table range based on the roll parameter if one exists
         if ("Roll" in stuff.p_data.keys() or "RollProp" in stuff.p_data.keys()):
             rollString = stuff.p_data["Roll"] if "Roll" in stuff.p_data.keys() else st.session_state.class_table[stuff.p_data["RollProp"]]
-            dropdownTable = {k: v for k,v in dropdownTable.items() if int(k) in range(rollMin(rollString),rollMax(rollString)+1)}
+            dropdownTable = {k: v for k,v in dropdownTable.items() if int(k) in range(lu.rollMin(rollString),lu.rollMax(rollString)+1)}
         #execute stuff replacement
         if "StuffReplacement" in st.session_state.class_table.keys():
             dropdownTable = {k: processStuffReplacement(v) for k,v in dropdownTable.items()}
@@ -523,99 +363,50 @@ def writeStuffChildStuff(stuff, prefix, customStuffTable):
         rollString = "1d"+str(len(dropdownList))
         col1, col2 = st.columns([5,1],vertical_alignment="bottom")
         with col1:
-            st.selectbox(labelString, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry.p_name), key="t_"+keyName, index=None, placeholder=rollString, on_change=resetErrField, args=[errBoxID], label_visibility="collapsed", disabled=st.session_state.select_disable_stuff)
+            st.selectbox(labelString, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry.p_name), key="t_"+keyName, index=None, placeholder=rollString, on_change=lu.resetErrField, args=[errBoxID], label_visibility="collapsed", disabled=st.session_state.select_disable_stuff)
         with col2:
-            st.button('Random', key = keyName+"_random", on_click = randomSelector, args=["t_"+keyName,dropdownList], kwargs={"errField": errBoxID}, disabled=st.session_state.select_disable_stuff)
+            st.button('Random', key = keyName+"_random", on_click=lu.randomSelector, args=["t_"+keyName,dropdownList], kwargs={"errField": errBoxID}, disabled=st.session_state.select_disable_stuff)
         if st.session_state["t_"+keyName]:
             selectedStuffObject = st.session_state["t_"+keyName]
             insertStuffEntry(selectedStuffObject, subPrefix)
     #SubStuff gets a double-name for the same reason as above
     if "SubStuff" in stuff.p_data.keys():
         insertStuffEntry(stuff.p_data["SubStuff"], prefix+"."+prefix)
-
-#callback function for input changes to reset error unconditionally
-def resetErrField(errField):
-    st.write("Resetting field: "+errField)
-    st.session_state[errField] = False
-    
-#callback function for input changes to make sure they're numbers in a valid range - return values are also used in page initialization
-def changeNumInput(key,errField,roll = None, override = False):
-    try:
-        val = st.session_state[key]
-        if val:
-            val = int(val)
-            st.session_state[errField] = (False or override)
-            if roll:
-                if val > rollMax(roll) or val < rollMin(roll):
-                    st.session_state[errField] = True
-        else:
-            st.session_state[errField] = (False or override)
-    except:
-        st.session_state[errField] = True
-    return st.session_state[errField]
-    
-#random selection for arbitrary and specific fields
-def randomSelector(key,selectList,errField = None):
-    st.session_state[key] = random.choice(selectList)
-    if errField:
-        resetErrField(errField)
-    
-#random selection for arbitrary and specific fields
-def randomSelectWordTable(table):
-    randomEntry = random.choice(table)
-    if isinstance(randomEntry,list):
-        randomEntry = randomSelectWordTable(randomEntry)
-    return randomEntry
-    
-def randomNumber(key,rollString,errField = None,lowerLimit = None):
-    rollResult = roll(statifyString(rollString))
-    if lowerLimit:
-        rollResult = max(lowerLimit,rollResult)
-    st.session_state[key] = str(rollResult)
-    if errField:
-        changeNumInput(key,errField,roll = rollString)
     
 def randomStats():
-    st.session_state.t_char_agi = str(roll(statifyString(st.session_state.class_table["AgilityRoll"])))
-    st.session_state.t_char_knw = str(roll(statifyString(st.session_state.class_table["KnowledgeRoll"])))
-    st.session_state.t_char_pre = str(roll(statifyString(st.session_state.class_table["PresenceRoll"])))
-    st.session_state.t_char_str = str(roll(statifyString(st.session_state.class_table["StrengthRoll"])))
-    st.session_state.t_char_tou = str(roll(statifyString(st.session_state.class_table["ToughnessRoll"])))
-    changeNumInput("t_char_agi","err_text_stat")
-    changeNumInput("t_char_knw","err_text_stat")
-    changeNumInput("t_char_pre","err_text_stat")
-    changeNumInput("t_char_str","err_text_stat")
-    changeNumInput("t_char_tou","err_text_stat")
+    st.session_state.t_char_agi = str(lu.roll(lu.statifyString(st.session_state.class_table["AgilityRoll"])))
+    st.session_state.t_char_knw = str(lu.roll(lu.statifyString(st.session_state.class_table["KnowledgeRoll"])))
+    st.session_state.t_char_pre = str(lu.roll(lu.statifyString(st.session_state.class_table["PresenceRoll"])))
+    st.session_state.t_char_str = str(lu.roll(lu.statifyString(st.session_state.class_table["StrengthRoll"])))
+    st.session_state.t_char_tou = str(lu.roll(lu.statifyString(st.session_state.class_table["ToughnessRoll"])))
+    lu.changeNumInput("t_char_agi","err_text_stat")
+    lu.changeNumInput("t_char_knw","err_text_stat")
+    lu.changeNumInput("t_char_pre","err_text_stat")
+    lu.changeNumInput("t_char_str","err_text_stat")
+    lu.changeNumInput("t_char_tou","err_text_stat")
     
 def randomSecondaryStats():
-    st.session_state.t_char_hpmax = str(max(1,roll(statifyString(st.session_state.class_table["HPRoll"]))))
-    st.session_state.t_char_glitch = str(roll(statifyString(st.session_state.class_table["GlitchRoll"])))
-    st.session_state.t_char_creds = str(roll(statifyString(st.session_state.class_table["CreditsRoll"])))
-    st.session_state.t_char_debt = str(roll(statifyString(st.session_state.class_table["DebtRoll"])))
-    changeNumInput("t_char_hpmax","err_text_secondary_stat")
-    changeNumInput("t_char_glitch","err_text_secondary_stat")
-    changeNumInput("t_char_creds","err_text_secondary_stat")
-    changeNumInput("t_char_debt","err_text_secondary_stat")
+    st.session_state.t_char_hpmax = str(max(1,lu.roll(lu.statifyString(st.session_state.class_table["HPRoll"]))))
+    st.session_state.t_char_glitch = str(lu.roll(lu.statifyString(st.session_state.class_table["GlitchRoll"])))
+    st.session_state.t_char_creds = str(lu.roll(lu.statifyString(st.session_state.class_table["CreditsRoll"])))
+    st.session_state.t_char_debt = str(lu.roll(lu.statifyString(st.session_state.class_table["DebtRoll"])))
+    lu.changeNumInput("t_char_hpmax","err_text_secondary_stat")
+    lu.changeNumInput("t_char_glitch","err_text_secondary_stat")
+    lu.changeNumInput("t_char_creds","err_text_secondary_stat")
+    lu.changeNumInput("t_char_debt","err_text_secondary_stat")
     
 def randomDesc():
-    st.session_state.t_char_name = randomSelectWordTable(wordTableDB["Name"]).lower()
-    st.session_state.t_char_style = randomSelectWordTable(wordTableDB["Style"]).lower()
-    st.session_state.t_char_feature = randomSelectWordTable(wordTableDB["Feature"]).lower()
-    st.session_state.t_char_quirk = randomSelectWordTable(wordTableDB["Quirk"]).lower()
-    st.session_state.t_char_obsession = randomSelectWordTable(wordTableDB["Obsession"]).lower()
-    st.session_state.t_char_desire = randomSelectWordTable(wordTableDB["Desire"]).lower()
-    st.session_state.t_char_lender = randomSelectWordTable(wordTableDB["Lender"]).lower()
+    st.session_state.t_char_name = lu.randomSelectWordTable(wordTableDB["Name"]).lower()
+    st.session_state.t_char_style = lu.randomSelectWordTable(wordTableDB["Style"]).lower()
+    st.session_state.t_char_feature = lu.randomSelectWordTable(wordTableDB["Feature"]).lower()
+    st.session_state.t_char_quirk = lu.randomSelectWordTable(wordTableDB["Quirk"]).lower()
+    st.session_state.t_char_obsession = lu.randomSelectWordTable(wordTableDB["Obsession"]).lower()
+    st.session_state.t_char_desire = lu.randomSelectWordTable(wordTableDB["Desire"]).lower()
+    st.session_state.t_char_lender = lu.randomSelectWordTable(wordTableDB["Lender"]).lower()
     if "RandomClassLore" in st.session_state.class_table.keys():
-        st.session_state.t_char_class_lore = randomSelectWordTable(st.session_state.class_table["RandomClassLore"])
-
-#cache both of the functions that get json objects
-@functools.cache
-def getJsonObject(objectName):
-    with open('jsonDB/'+objectName, encoding='utf-8') as fh:
-        jsonObject = json.load(fh)
-    return jsonObject
+        st.session_state.t_char_class_lore = lu.randomSelectWordTable(st.session_state.class_table["RandomClassLore"])
     
-@functools.cache
+@st.cache_data
 def getClassObject(tableName: str):
     with open('jsonDB/classBaseClass.json', encoding='utf-8') as fh:
         classDict = json.load(fh)
@@ -625,10 +416,8 @@ def getClassObject(tableName: str):
             classDict.update(newClassDict)
     return classDict
     
-stuffDB = {k: processStuff(v) for k,v in getJsonObject("stuffDB.json").items()}
-stuffTableDB = getJsonObject("stuffTables.json")
+mapClassTable = lu.fieldTableDB["ClassTableDict"]
+stuffTableDB = lu.getJsonObject("stuffTables.json")
 for table in list(stuffTableDB.keys()):
-    stuffTableDB[table] = {k: processStuff(v, source = table) for k,v in stuffTableDB[table].items()}
-fieldTableDB = getJsonObject("fieldTables.json")
-wordTableDB = getJsonObject("wordTables.json")
-errTextDB = fieldTableDB["ErrorText"]
+    stuffTableDB[table] = {k: lu.processStuff(v, source = table) for k,v in stuffTableDB[table].items()}
+wordTableDB = lu.getJsonObject("wordTables.json")

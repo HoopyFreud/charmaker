@@ -1,9 +1,4 @@
-import yaml
-    
-def loadFromYaml(yamlIO):
-    return yaml.load(yamlIO, Loader=yaml.Loader)
-
-class PC(yaml.YAMLObject):
+class PC():
     pc_name = None
     pc_desc = None
     pc_class = None
@@ -23,19 +18,16 @@ class PC(yaml.YAMLObject):
     pc_debt_lender = None
     pc_stuff = []
     
-    def as_yaml(self):
-        return yaml.dump(self)
-    
     def getCurrentCarry(self):
         return 5
     
-class DamageField(yaml.YAMLObject):
+class DamageField():
     p_damage = None
     p_desc = None
     p_firemode = None
     p_mech_bonus = False
     
-class PropChangeField(yaml.YAMLObject):
+class PropChangeField():
     p_property = None
     p_value = None
     p_dispName = None
@@ -45,12 +37,12 @@ class PropChangeField(yaml.YAMLObject):
         self.p_value = p_value
         self.p_dispName = p_dispName
     
-class Stuff(yaml.YAMLObject):
+class Stuff():
     p_name = None
     p_desc = None
     p_sub_stuff = None
     
-class Feature(yaml.YAMLObject):
+class Feature():
     p_name = None
     p_text = None
     

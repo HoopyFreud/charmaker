@@ -1,7 +1,7 @@
-import st_function_lib as stl
+import lib_creation as lc
+import lib_class_def as lcd
+import lib_sheet as ls
 import streamlit as st
-import build_char as bc
-import st_render_char_lib as strc
 
 def appSetupKeys():
     
@@ -20,10 +20,10 @@ def appSetupKeys():
         st.session_state.select_disable_stuff = True
         
     if "PC" not in st.session_state:
-        st.session_state.PC = bc.PC()
-        strc.export_char.clear()
+        st.session_state.PC = lcd.PC()
+        ls.saveToYaml.clear()
     if "class_table" not in st.session_state:
-        st.session_state.class_table = stl.processClassTable(stl.getClassObject(None))
+        st.session_state.class_table = lc.processClassTable(lc.getClassObject(None))
         
     if "t_char_class" not in st.session_state:
         st.session_state.t_char_class = None

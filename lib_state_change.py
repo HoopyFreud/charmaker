@@ -1,8 +1,8 @@
-from st_setup import appSetupKeys
-import st_function_lib as stl
-import st_render_char_lib as strl
+from lib_setup import appSetupKeys
+import lib_creation as lc
+import lib_sheet as ls
+import lib_class_def as lcd
 import streamlit as st
-import build_char as bc
 
 def charReset():
     for key in st.session_state.keys():
@@ -14,18 +14,18 @@ def charReset():
     st.session_state.select_disable_secondary_stat = True
     st.session_state.select_disable_desc = True
     st.session_state.select_disable_stuff = True
-    st.session_state.PC = bc.PC()
-    st.session_state.class_table = stl.processClassTable(stl.getClassObject(None))
+    st.session_state.PC = lcd.PC()
+    st.session_state.class_table = lc.processClassTable(lc.getClassObject(None))
     st.session_state.class_feature = None
-    strl.export_char.clear()
+    ls.saveToYaml.clear()
     
 def processCharUpload():
     if st.session_state.file_uploader_value:
-        st.session_state.PC = bc.loadFromYaml(st.session_state.file_uploader_value)
+        st.session_state.PC = ls.loadFromYaml(st.session_state.file_uploader_value)
         setStageView()
     
 def finalizeClass():
-    valid_class = stl.burnPCClass()
+    valid_class = lc.burnPCClass()
     if valid_class:
         st.session_state.stage = 2
         st.session_state.err_text_class = None
@@ -38,7 +38,7 @@ def finalizeClass():
         st.session_state.err_text_class = True
     
 def finalizeStats():
-    valid_stats = stl.burnPCStats()
+    valid_stats = lc.burnPCStats()
     if valid_stats:
         st.session_state.stage = 3
         st.session_state.select_disable_class = True
@@ -50,7 +50,7 @@ def finalizeStats():
         st.session_state.err_text_stat = True
         
 def finalizeSecondaryStats():
-    valid_secondary_stats = stl.burnPCSecondaryStats()
+    valid_secondary_stats = lc.burnPCSecondaryStats()
     if valid_secondary_stats:
         st.session_state.err_text_secondary_stat = None
         st.session_state.stage = 4
@@ -63,7 +63,7 @@ def finalizeSecondaryStats():
         st.session_state.err_text_secondary_stat = True
         
 def finalizeDesc():
-    valid_desc = stl.burnPCDesc()
+    valid_desc = lc.burnPCDesc()
     if valid_desc:
         st.session_state.err_text_stuff = False
         st.session_state.stage = 5
@@ -76,7 +76,7 @@ def finalizeDesc():
         st.session_state.err_text_desc = True
         
 def finalizeStuff():
-    valid_stuff = stl.burnPCStuff()
+    valid_stuff = lc.burnPCStuff()
     if valid_stuff:
         setStageView()
         
@@ -87,4 +87,4 @@ def setStageView():
     st.session_state.select_disable_secondary_stat = True
     st.session_state.select_disable_desc = True
     st.session_state.select_disable_stuff = True
-    strl.export_char.clear()
+    ls.saveToYaml.clear()

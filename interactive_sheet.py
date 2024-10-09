@@ -1,11 +1,11 @@
-import st_function_lib as stl
-import st_render_char_lib as strc
+import lib_util as lu
+import lib_sheet as ls
 import streamlit as st
 
 def dispCharSheet():
     st.markdown('<h1 class="char_name_header">'+"You are "+st.session_state.PC.pc_name+'</h1>',unsafe_allow_html=True)
     st.divider()
-    statList = stl.fieldTableDB["StatTable"]
+    statList = lu.fieldTableDB["StatTable"]
     headerString = ""
     statString = "+"+str(st.session_state.PC.pc_agi) if st.session_state.PC.pc_agi > 0 else str(st.session_state.PC.pc_agi)
     headerString = headerString + '<div>' + statList[0]+": " + statString + '</div>'
@@ -27,20 +27,20 @@ def dispCharSheet():
             with subcol1:
                 st.write("# HP:")
             with subcol2:
-                st.number_input("HP", key="c_pc_hp_current", on_change=strc.update_char, step=1, label_visibility="collapsed")
+                st.number_input("HP", key="c_pc_hp_current", on_change=ls.updateChar, step=1, label_visibility="collapsed")
             with subcol3:
                 st.write("# /")
             with subcol4:
                 with st.popover(str(st.session_state.PC.pc_hp_max)):
                     st.write("Base HP")
-                    st.number_input("Base HP", key="c_pc_hp_max", on_change=strc.update_char, step=1, label_visibility="collapsed")
+                    st.number_input("Base HP", key="c_pc_hp_max", on_change=ls.updateChar, step=1, label_visibility="collapsed")
             st.divider()
             #Glitches
             subcol1, subcol2 = st.columns([2,1.5],vertical_alignment="center")
             with subcol1:
                 st.write("# Glitches:")
             with subcol2:
-                st.number_input("Glitches", key="c_pc_glitch_current", on_change=strc.update_char, step=1, label_visibility="collapsed")
+                st.number_input("Glitches", key="c_pc_glitch_current", on_change=ls.updateChar, step=1, label_visibility="collapsed")
             with st.container(key="glitch_reset_container"):
                 st.button("Reset ("+st.session_state.PC.pc_glitch_roll+")", use_container_width=True)
             st.divider()
@@ -55,20 +55,20 @@ def dispCharSheet():
             with subcol4:
                 with st.popover(str(st.session_state.PC.pc_carrying_max)):
                     st.write("Base Carrying Capacity")
-                    st.number_input("Base Carry Cap", key="c_pc_carrying_max", on_change=strc.update_char, step=1, label_visibility="collapsed")
+                    st.number_input("Base Carry Cap", key="c_pc_carrying_max", on_change=ls.updateChar, step=1, label_visibility="collapsed")
             st.divider()
             #Credits
             subcol1, subcol2 = st.columns([1,2],vertical_alignment="center")
             with subcol1:
                 st.write("# Credits:")
             with subcol2:
-                st.number_input("Credits", key="c_pc_creds", on_change=strc.update_char, step=1, label_visibility="collapsed")
+                st.number_input("Credits", key="c_pc_creds", on_change=ls.updateChar, step=1, label_visibility="collapsed")
             #Debt
             subcol1, subcol2 = st.columns([1,3],vertical_alignment="center")
             with subcol1:
                 st.write("# Debt:")
             with subcol2:
-                st.number_input("Debt", key="c_pc_debt", on_change=strc.update_char, step=1, label_visibility="collapsed")
+                st.number_input("Debt", key="c_pc_debt", on_change=ls.updateChar, step=1, label_visibility="collapsed")
     with col2:
         pass
     with col3:
