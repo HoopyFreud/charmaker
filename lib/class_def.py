@@ -1,3 +1,5 @@
+import copy
+
 class PC():
     pc_name = None
     pc_desc = None
@@ -19,7 +21,7 @@ class PC():
     pc_stuff = []
     
     def flatStuffList(self):
-        return self.recursiveListFlatten(self.pc_stuff)
+        return self.recursiveListFlatten(copy.deepcopy(self.pc_stuff))
 
     def recursiveListFlatten(self,inList):
         if isinstance(inList,list):
@@ -54,7 +56,8 @@ class Stuff():
     p_sub_stuff = None
     
 class Feature():
-    p_text = None
+    p_feature_text = None
+    p_pc_desc_text = None
     
 class Nano(Stuff):
     pass

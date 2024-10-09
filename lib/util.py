@@ -176,10 +176,10 @@ def generateObjectFromStuffField(stuff):
     if "DamageReduction" in stuff.p_data.keys():
         stuffObj.p_armor = stuff.p_data["DamageReduction"]
     if "FeatureText" in stuff.p_data.keys():
-        stuffObj.p_text = stuff.p_data["FeatureText"]
+        stuffObj.p_feature_text = stuff.p_data["FeatureText"]
     if "HP" in stuff.p_data.keys():
-        stuffObj.p_hp_max = fieldValue
-        stuffObj.p_hp_current = fieldValue
+        stuffObj.p_hp_max = stuff.p_data["HP"]
+        stuffObj.p_hp_current = stuff.p_data["HP"]
     if "Mags" in stuff.p_data.keys():
         stuffObj.p_mags = stuff.p_data["Mags"]
     if "PropChange" in stuff.p_data.keys():

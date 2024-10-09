@@ -18,6 +18,8 @@ def appSetupKeys():
         st.session_state.select_disable_desc = True
     if "select_disable_stuff" not in st.session_state:
         st.session_state.select_disable_stuff = True
+    if "select_disable_sheet_desc" not in st.session_state:
+        st.session_state.select_disable_sheet_desc = True
         
     if "PC" not in st.session_state:
         st.session_state.PC = lcd.PC()
@@ -62,7 +64,8 @@ def appUpdatePC():
     st.session_state.c_pc_carrying_max = st.session_state.PC.pc_carrying_max
     st.session_state.c_pc_creds = st.session_state.PC.pc_creds
     st.session_state.c_pc_debt = st.session_state.PC.pc_debt
-    st.session_state.c_pc_flat_stuff_list = st.session_state.PC.flatStuffList()
+    st.session_state.c_pc_desc = st.session_state.PC.pc_desc
+    st.session_state.c_pc_flat_stuff_list = ls.getFlatStuffList()
     
 def appCSS():
     primaryColor = st.get_option("theme.textColor")
@@ -78,16 +81,12 @@ def appCSS():
         .char_name_header {{width:100%;text-align:center}}
         .char_stat_block {{width:100%;display:flex;justify-content:space-between;font-size: 1.25rem;font-weight: 400}}
         .st-key-secondary_stat_sidebar hr {{margin:0}}
-        .st-key-secondary_stat_sidebar h1 {{font-size: 1.25rem;font-weight: 400}}
+        .st-key-secondary_stat_sidebar h2 {{font-size: 1.25rem;font-weight: 400}}
         .st-key-secondary_stat_sidebar div[data-testid="stMarkdownContainer"] {{margin-bottom: initial !important}}
         .st-key-secondary_stat_sidebar .st-key-glitch_reset_container {{position: relative;bottom: 1rem}}
         hr {{margin: 1em 0}}
-        h1 > span {{display: none !important}}
-        h2 > span {{display: none !important}}
-        h3 > span {{display: none !important}}
-        h4 > span {{display: none !important}}
-        h5 > span {{display: none !important}}
-        h6 > span {{display: none !important}}
+        .st-key-desc_box h2 {{padding:0.5rem 0}}
+        .st-key-desc_box div[data-testid="stMarkdownContainer"]:has(h2) {{margin-bottom: initial !important}}
     </style>
     """,
     unsafe_allow_html=True,

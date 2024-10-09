@@ -22,7 +22,8 @@
             "Feature": 
             {
                 "Name": "Hits",
-                "FeatureText": "When attacking from surprise, test Agility DR10. On a success, you hit once with a melee weapon, dealing normal damage +3."
+                "FeatureText": "When attacking from surprise, test Agility DR10. On a success, you hit once with a melee weapon, dealing normal damage +3.",
+                "DescText": "Your specialty was hits."
             }
         },
         "2":
@@ -30,7 +31,8 @@
             "Feature": 
             {
                 "Name": "Brawls",
-                "FeatureText": "Test Agility DR14 to sucker punch an opponent in melee. Deal normal damage and give all allies -2DR on their next attack against the same enemy."
+                "FeatureText": "Test Agility DR14 to sucker punch an opponent in melee. Deal normal damage and give all allies -2DR on their next attack against the same enemy.",
+                "DescText": "Your specialty was brawls."
             }
         },
         "3":
@@ -43,7 +45,8 @@
                     {
                         "Feature": 
                         {
-                            "FeatureText": "You have a talent for opening doors and getting inside buildings. Test Agility DR10 to pick any mechanical lock or Knowledge DR10 for any electronic lock."
+                            "FeatureText": "You have a talent for opening doors and getting inside buildings. Test Agility DR10 to pick any mechanical lock or Knowledge DR10 for any electronic lock.",
+                            "DescText": "Your specialty was breaking and entering."
                         }
                     },
                     {
@@ -66,7 +69,8 @@
             "Feature": 
             {
                 "Name": "Fencing",
-                "FeatureText": "You know potential buyers for almost anything. Once per day, you can test Presence DR12 to remember the name of a person in Cy who might be willing and able to buy whatever illicit goods have fallen into your hands."
+                "FeatureText": "You know potential buyers for almost anything. Once per day, you can test Presence DR12 to remember the name of a person in Cy who might be willing and able to buy whatever illicit goods have fallen into your hands.",
+                "DescText": "Your specialty was fencing."
             }
         },
         "5":
@@ -79,7 +83,8 @@
                     {
                         "Feature": 
                         {
-                            "FeatureText": "You know how to clean up evidence from a crime scene. You get -4DR when you do."
+                            "FeatureText": "You know how to clean up evidence from a crime scene. You get -4DR when you do.",
+                            "DescText": "Your specialty was cleanup."
                         }
                     },
                     {
@@ -103,7 +108,8 @@
             "Feature": 
             {
                 "Name": "Assaults",
-                "FeatureText": "With a weapon in each hand, you can make a second attack each round at DR14."
+                "FeatureText": "With a weapon in each hand, you can make a second attack each round at DR14.",
+                "DescText": "Your specialty was assaults."
             }
         },
         "7":
@@ -116,7 +122,8 @@
                     {
                         "Feature": 
                         {
-                            "FeatureText": "You know how to make a scene and then disappear. You get -4DR when you do."
+                            "FeatureText": "You know how to make a scene and then disappear. You get -4DR when you do.",
+                            "DescText": "Your specialty was distraction."
                         }
                     },
                     {

@@ -14,6 +14,7 @@ def charReset():
     st.session_state.select_disable_secondary_stat = True
     st.session_state.select_disable_desc = True
     st.session_state.select_disable_stuff = True
+    st.session_state.select_disable_sheet_desc = True
     st.session_state.PC = lcd.PC()
     st.session_state.class_table = lc.processClassTable(lc.getClassObject(None))
     st.session_state.class_feature = None
@@ -34,6 +35,7 @@ def finalizeClass():
         st.session_state.select_disable_secondary_stat = True
         st.session_state.select_disable_desc = True
         st.session_state.select_disable_stuff = True
+        st.session_state.select_disable_sheet_desc = True
     else:
         st.session_state.err_text_class = True
     
@@ -46,6 +48,7 @@ def finalizeStats():
         st.session_state.select_disable_secondary_stat = False
         st.session_state.select_disable_desc = True
         st.session_state.select_disable_stuff = True
+        st.session_state.select_disable_sheet_desc = True
     else:
         st.session_state.err_text_stat = True
         
@@ -59,6 +62,7 @@ def finalizeSecondaryStats():
         st.session_state.select_disable_secondary_stat = True
         st.session_state.select_disable_desc = False
         st.session_state.select_disable_stuff = True
+        st.session_state.select_disable_sheet_desc = True
     else:
         st.session_state.err_text_secondary_stat = True
         
@@ -72,6 +76,7 @@ def finalizeDesc():
         st.session_state.select_disable_secondary_stat = True
         st.session_state.select_disable_desc = True
         st.session_state.select_disable_stuff = False
+        st.session_state.select_disable_sheet_desc = True
     else:
         st.session_state.err_text_desc = True
         
@@ -87,4 +92,18 @@ def setStageView():
     st.session_state.select_disable_secondary_stat = True
     st.session_state.select_disable_desc = True
     st.session_state.select_disable_stuff = True
+    st.session_state.select_disable_sheet_desc = True
     ls.clearCharCache()
+        
+def sheetEditDesc():
+    st.session_state.stage = -2
+    st.session_state.select_disable_class = True
+    st.session_state.select_disable_stat = True
+    st.session_state.select_disable_secondary_stat = True
+    st.session_state.select_disable_desc = True
+    st.session_state.select_disable_stuff = True
+    st.session_state.select_disable_sheet_desc = False
+        
+def sheetSaveDesc():
+    ls.updateChar()
+    setStageView()

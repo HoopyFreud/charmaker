@@ -1,5 +1,6 @@
 import lib.util as lu
 import lib.sheet as ls
+import lib.state_change as lsc
 import streamlit as st
 
 def dispCharSheet():
@@ -25,52 +26,66 @@ def dispCharSheet():
             #HP
             subcol1, subcol2, subcol3, subcol4 = st.columns([1,1,0.25,1.5],vertical_alignment="center")
             with subcol1:
-                st.write("# HP:")
+                st.header("HP:", anchor=False)
             with subcol2:
-                st.number_input("HP", key="c_pc_hp_current", on_change=ls.updateChar, step=1, label_visibility="collapsed")
+                st.number_input("HP", key="c_pc_hp_current", on_change=ls.updateChar, kwargs={"cacheType":None}, step=1, label_visibility="collapsed")
             with subcol3:
-                st.write("# /")
+                st.header("/", anchor=False)
             with subcol4:
                 with st.popover(str(st.session_state.PC.pc_hp_max)):
                     st.write("Base HP")
-                    st.number_input("Base HP", key="c_pc_hp_max", on_change=ls.updateChar, step=1, label_visibility="collapsed")
+                    st.number_input("Base HP", key="c_pc_hp_max", on_change=ls.updateChar, kwargs={"cacheType":None}, step=1, label_visibility="collapsed")
             st.divider()
             #Glitches
-            subcol1, subcol2 = st.columns([2,1.5],vertical_alignment="center")
+            subcol1, subcol2 = st.columns([1,1.5],vertical_alignment="center")
             with subcol1:
-                st.write("# Glitches:")
+                st.header("Glitches:", anchor=False)
             with subcol2:
-                st.number_input("Glitches", key="c_pc_glitch_current", on_change=ls.updateChar, step=1, label_visibility="collapsed")
+                st.number_input("Glitches", key="c_pc_glitch_current", on_change=ls.updateChar, kwargs={"cacheType":None}, step=1, label_visibility="collapsed")
             with st.container(key="glitch_reset_container"):
                 st.button("Reset ("+st.session_state.PC.pc_glitch_roll+")", use_container_width=True)
             st.divider()
             #Carrying capacity
             subcol1, subcol2, subcol3, subcol4 = st.columns([2,0.5,0.5,1.5],vertical_alignment="center")
             with subcol1:
-                st.write("# Carrying Capacity:")
+                st.header("Carrying Capacity:", anchor=False)
             with subcol2:
-                st.write("# " + str(st.session_state.PC.getCurrentCarry()))
+                st.header(str(st.session_state.PC.getCurrentCarry()), anchor=False)
             with subcol3:
-                st.write("# /")
+                st.header("/", anchor=False)
             with subcol4:
                 with st.popover(str(st.session_state.PC.pc_carrying_max)):
                     st.write("Base Carrying Capacity")
-                    st.number_input("Base Carry Cap", key="c_pc_carrying_max", on_change=ls.updateChar, step=1, label_visibility="collapsed")
+                    st.number_input("Base Carry Cap", key="c_pc_carrying_max", on_change=ls.updateChar, kwargs={"cacheType":None}, step=1, label_visibility="collapsed")
             st.divider()
             #Credits
             subcol1, subcol2 = st.columns([1,2],vertical_alignment="center")
             with subcol1:
-                st.write("# Credits:")
+                st.header("Credits:", anchor=False)
             with subcol2:
-                st.number_input("Credits", key="c_pc_creds", on_change=ls.updateChar, step=1, label_visibility="collapsed")
+                st.number_input("Credits", key="c_pc_creds", on_change=ls.updateChar, kwargs={"cacheType":None}, step=1, label_visibility="collapsed")
             #Debt
             subcol1, subcol2 = st.columns([1,3],vertical_alignment="center")
             with subcol1:
-                st.write("# Debt:")
+                st.header("Debt:", anchor=False)
             with subcol2:
-                st.number_input("Debt", key="c_pc_debt", on_change=ls.updateChar, step=1, label_visibility="collapsed")
+                st.number_input("Debt", key="c_pc_debt", on_change=ls.updateChar, kwargs={"cacheType":None}, step=1, label_visibility="collapsed")
     with col2:
         pass
     with col3:
-        st.write(st.session_state.PC.pc_desc)
-        ls.displayFeatures()
+        with st.container(key="desc_box"):
+            subcol1, subcol2 = st.columns([3,1],vertical_alignment="center")
+            with subcol1:
+                st.header("Description:", anchor=False)
+            with subcol2:
+                if st.session_state.select_disable_sheet_desc:
+                    st.button("Edit", key="sheet_edit_desc", on_click=lsc.sheetEditDesc, use_container_width=True)
+                else:
+                    st.button("Save", key="sheet_save_desc", on_click=lsc.sheetSaveDesc, use_container_width=True)
+            if st.session_state.select_disable_sheet_desc:
+                for descLine in st.session_state.PC.pc_desc.splitlines(): st.write(descLine)
+            else:
+                st.text_area("Description", height=275, key="c_pc_desc", label_visibility="collapsed")
+            ls.displayStuffDesc()
+            ls.displayFeatures()
+    st.divider()

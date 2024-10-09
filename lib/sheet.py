@@ -2,10 +2,9 @@ import lib.class_def as lcd
 import streamlit as st
 import yaml
 
-def clearCharCache(cacheType = None):
-    if cacheType is None or cacheType == "YAMLDump" or "YAMLDump" in cacheType:
-        saveToYaml.clear()
-    if cacheType is None or cacheType == "flatStuffList" or "flatStuffList" in cacheType:
+def clearCharCache(cacheType = "All"):
+    saveToYaml.clear()
+    if cacheType == "All" or cacheType == "Stuff" or "Stuff" in cacheType:
         getFlatStuffList.clear()
     
 def loadFromYaml(yamlIO):
@@ -17,26 +16,39 @@ def saveToYaml():
         return yaml.dump(st.session_state.PC)
     return None
     
-@st.cache_data
-def getFlatStuffList():
-    if "PC" in st.session_state:
-        return yaml.dump(st.session_state.PC)
-    return None
+@st.cache_resource
+def getFlatStuffList(): 
+    return st.session_state.PC.flatStuffList()
 
-def updateChar(cacheType = None):
+def updateChar(cacheType = "All"):
     st.session_state.PC.pc_hp_current = st.session_state.c_pc_hp_current
     st.session_state.PC.pc_hp_max = st.session_state.c_pc_hp_max
     st.session_state.PC.pc_glitch_current = st.session_state.c_pc_glitch_current
     st.session_state.PC.pc_carrying_max = st.session_state.c_pc_carrying_max
     st.session_state.PC.pc_creds = st.session_state.c_pc_creds
     st.session_state.PC.pc_debt = st.session_state.c_pc_debt
+    st.session_state.PC.pc_desc = st.session_state.c_pc_desc
     saveToYaml.clear(cacheType = cacheType)
+
+def displayStuffDesc():
+    featureStrings = []
+    for item in st.session_state.c_pc_flat_stuff_list:
+        try:
+            if item.p_pc_desc_text is not None:
+                featureStrings.append(item.p_pc_desc_text)
+        except:
+            pass
+    if featureStrings:
+        for feature in featureStrings: st.write(feature)
 
 def displayFeatures():
     featureStrings = []
     for item in st.session_state.c_pc_flat_stuff_list:
-        if isinstance(item,lcd.Feature):
-            featureStrings.append(item.p_text)
+        try:
+            if item.p_feature_text is not None:
+                featureStrings.append(item.p_feature_text)
+        except:
+            pass
     if featureStrings:
-        st.header("Features:")
+        st.header("Features:", anchor=False)
         for feature in featureStrings: st.write(feature)
