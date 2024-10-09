@@ -1,31 +1,7 @@
-import random
 import yaml
     
 def loadFromYaml(yamlIO):
     return yaml.load(yamlIO, Loader=yaml.Loader)
-    
-def writePCDesc(classDict):
-    with open('styleTable.json', encoding='utf-8') as fh:
-        style = random.choice(json.load(fh))
-    with open('featureTable.json', encoding='utf-8') as fh:
-        feature = random.choice(json.load(fh))
-    with open('quirkTable.json', encoding='utf-8') as fh:
-        quirk = random.choice(json.load(fh))
-    with open('obsessionTable.json', encoding='utf-8') as fh:
-        obsession = random.choice(json.load(fh))
-    with open('desireTable.json', encoding='utf-8') as fh:
-        desire = random.choice(json.load(fh))
-    with open('obsessionLinkingWordsTable.json', encoding='utf-8') as fh:
-        obsessionLinkingWords = random.choice(json.load(fh))
-    with open('desireLinkingWordsTable.json', encoding='utf-8') as fh:
-        desireLinkingWords = random.choice(json.load(fh))
-    
-    descList = [style + " " + classDict['Name'] + "; " + feature + ", " + quirk + obsessionLinkingWords + " " + obsession + ". " + desireLinkingWords + " " + desire + "."]
-    
-    if classDict.get("DescText",None):
-        descList.extend(classDict["DescText"])
-    
-    return descList
 
 class PC(yaml.YAMLObject):
     pc_name = None

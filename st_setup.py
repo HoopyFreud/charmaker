@@ -64,7 +64,8 @@ def appUpdatePC():
     st.session_state.c_pc_debt = st.session_state.PC.pc_debt
     
 def appCSS():
-    primaryColor = st.get_option("theme.primaryColor")
+    primaryColor = st.get_option("theme.textColor")
+    secondaryBackgroundColor = st.get_option("theme.secondaryBackgroundColor")
     st.markdown(
     f"""
     <style>
@@ -72,6 +73,7 @@ def appCSS():
         .stFileUploader section {{padding: 0rem}}
         .stFileUploader section button {{width: 100%;font-size: 0}}
         .stFileUploader section button::after{{content: "Select File";display: block;position: absolute;color:{primaryColor};font-size: initial}}
+        div:has(> div > .st-key-carry_creation_container) {{padding:0.5rem;background-color:{secondaryBackgroundColor};border:None}}
         .char_name_header {{width:100%;text-align:center}}
         .char_stat_block {{width:100%;display:flex;justify-content:space-between;font-size: 1.25rem;font-weight: 400}}
         .st-key-secondary_stat_sidebar hr {{margin:0}}
