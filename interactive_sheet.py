@@ -1,5 +1,5 @@
-import lib_util as lu
-import lib_sheet as ls
+import lib.util as lu
+import lib.sheet as ls
 import streamlit as st
 
 def dispCharSheet():
@@ -73,3 +73,4 @@ def dispCharSheet():
         pass
     with col3:
         st.write(st.session_state.PC.pc_desc)
+        ls.displayFeatures()

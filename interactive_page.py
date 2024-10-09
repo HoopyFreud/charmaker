@@ -1,8 +1,8 @@
 from interactive_creation import dispCharCreation
 from interactive_sheet import dispCharSheet
-import lib_setup as lsup
-import lib_state_change as lsc
-import lib_sheet as ls
+import lib.setup as lsup
+import lib.state_change as lsc
+import lib.sheet as ls
 import streamlit as st
 
 lsup.appSetupKeys()

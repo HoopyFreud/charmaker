@@ -1,7 +1,7 @@
-import lib_state_change as lsc
-import lib_creation as lc
-import lib_util as lu
-import lib_class_def as lcd
+import lib.state_change as lsc
+import lib.creation as lc
+import lib.util as lu
+import lib.class_def as lcd
 import streamlit as st
 
 def dispCharCreation():
@@ -170,7 +170,7 @@ def dispCharCreation():
     if st.session_state.stage >= 5:
         if not st.session_state.select_disable_stuff:
             if "RandomClassStuff" in st.session_state.class_table.keys():
-                st.header(st.session_state.class_table["RandomClassStuffText"])
+                st.header(st.session_state.class_table["RandomClassStuffText"] + ":")
                 lc.insertStuffEntry(lcd.StuffField("RandomItem", None, {}), "RandomClassStuff", customStuffTable = st.session_state.class_table["RandomClassStuff"])
                 st.header("You also have:")
             else:
