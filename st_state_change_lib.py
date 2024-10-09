@@ -1,5 +1,6 @@
 from st_setup import appSetupKeys
 import st_function_lib as stl
+import st_render_char_lib as strl
 import streamlit as st
 import build_char as bc
 
@@ -16,6 +17,12 @@ def charReset():
     st.session_state.PC = bc.PC()
     st.session_state.class_table = stl.processClassTable(stl.getClassObject(None))
     st.session_state.class_feature = None
+    strl.export_char.clear()
+    
+def processCharUpload():
+    if st.session_state.file_uploader_value:
+        st.session_state.PC = bc.loadFromYaml(st.session_state.file_uploader_value)
+        setStageView()
     
 def finalizeClass():
     valid_class = stl.burnPCClass()
@@ -71,9 +78,13 @@ def finalizeDesc():
 def finalizeStuff():
     valid_stuff = stl.burnPCStuff()
     if valid_stuff:
-        st.session_state.stage = -1
-        st.session_state.select_disable_class = True
-        st.session_state.select_disable_stat = True
-        st.session_state.select_disable_secondary_stat = True
-        st.session_state.select_disable_desc = True
-        st.session_state.select_disable_stuff = True
+        setStageView()
+        
+def setStageView():
+    st.session_state.stage = -1
+    st.session_state.select_disable_class = True
+    st.session_state.select_disable_stat = True
+    st.session_state.select_disable_secondary_stat = True
+    st.session_state.select_disable_desc = True
+    st.session_state.select_disable_stuff = True
+    strl.export_char.clear()

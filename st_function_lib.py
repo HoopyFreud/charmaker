@@ -261,8 +261,6 @@ def getObjectFromStuffField(stuff, prefix):
         
     if "Unknown" in stuff.p_data.keys():
         err = getUnknownFieldValues(stuffObj,stuff.p_data["Unknown"],prefix)
-    #st.write(stuff.as_dict())
-    #st.write(vars(stuffObj))
     if err:
         return None
     else:
@@ -400,7 +398,7 @@ def insertStuffEntry(stuff, prefix, customStuffTable = None):
         writeStuffChildStuff(stuff, prefix, customStuffTable)
         #set up the error box
         if st.session_state[errBoxID]:
-            st.error(errorTextDB["err_text_stuff"])
+            st.error(errTextDB["err_text_stuff"])
 
 #fixed text is stuff like name and description - no lists, no unknowns, no subfields
 def writeStuffFixedText(stuff):

@@ -1,4 +1,8 @@
 import random
+import yaml
+    
+def loadFromYaml(yamlIO):
+    return yaml.load(yamlIO, Loader=yaml.Loader)
     
 def writePCDesc(classDict):
     with open('styleTable.json', encoding='utf-8') as fh:
@@ -23,7 +27,7 @@ def writePCDesc(classDict):
     
     return descList
 
-class PC:
+class PC(yaml.YAMLObject):
     pc_name = None
     pc_desc = None
     pc_class = None
@@ -43,13 +47,19 @@ class PC:
     pc_debt_lender = None
     pc_stuff = []
     
-class DamageField:
+    def as_yaml(self):
+        return yaml.dump(self)
+    
+    def getCurrentCarry(self):
+        return 5
+    
+class DamageField(yaml.YAMLObject):
     p_damage = None
     p_desc = None
     p_firemode = None
     p_mech_bonus = False
     
-class PropChangeField:
+class PropChangeField(yaml.YAMLObject):
     p_property = None
     p_value = None
     p_dispName = None
@@ -59,12 +69,12 @@ class PropChangeField:
         self.p_value = p_value
         self.p_dispName = p_dispName
     
-class Stuff:
+class Stuff(yaml.YAMLObject):
     p_name = None
     p_desc = None
     p_sub_stuff = None
     
-class Feature:
+class Feature(yaml.YAMLObject):
     p_name = None
     p_text = None
     

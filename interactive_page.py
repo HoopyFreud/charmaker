@@ -1,4 +1,4 @@
-from st_setup import appSetupKeys
+import st_setup as sts
 import st_state_change_lib as stc
 import st_function_lib as stl
 import st_render_char_lib as strc
@@ -6,19 +6,23 @@ import build_char as bc
 import streamlit as st
 import copy
 
-appSetupKeys()    
-#st.write(st.session_state)
+sts.appSetupKeys()
+sts.appUpdatePC()
+sts.appCSS()
+    
+char_export_yaml = strc.export_char()
 
 col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
 with col1:
-    pass
+    st.download_button('Save Character', char_export_yaml, key = "save_character", use_container_width=True)
 with col2:
     st.button('New Character', key = "new_character", on_click = stc.charReset, use_container_width=True)
 with col3:
-    pass
-        
-
-
+    with st.popover('Load Character', use_container_width=True):
+        with st.form('load-char-form', clear_on_submit=True, border=False):
+            uploadedChar = st.file_uploader("Upload file", key="file_uploader_value", label_visibility="collapsed")
+            st.form_submit_button("Load", on_click=stc.processCharUpload, use_container_width=True)
+    
 #ROW 1 - CLASS
 if st.session_state.stage >= 1:
     st.header("Class")
@@ -225,8 +229,7 @@ if st.session_state.stage >= 5:
             
 #FULL CHARACTER SHEET
 if st.session_state.stage < 0:
-    st.markdown('<h1 style="width:100%;text-align:center">'+"You are "+st.session_state.PC.pc_name+'</h1>',unsafe_allow_html=True)
-    
+    st.markdown('<h1 class="char_name_header">'+"You are "+st.session_state.PC.pc_name+'</h1>',unsafe_allow_html=True)
     st.divider()
     statList = stl.fieldTableDB["StatTable"]
     headerString = ""
@@ -240,9 +243,59 @@ if st.session_state.stage < 0:
     headerString = headerString + '<div>' + statList[3]+": " + statString + '</div>'
     statString = "+"+str(st.session_state.PC.pc_tou) if st.session_state.PC.pc_tou > 0 else str(st.session_state.PC.pc_tou)
     headerString = headerString + '<div>' + statList[4]+": " + statString + '</div>'
-    headerString = headerString + '<div>' + "HP: " +str(st.session_state.PC.pc_hp_current)+"/"+str(st.session_state.PC.pc_hp_max) + '</div>'
-    headerString = headerString + '<div>' + "Glitches: " +str(st.session_state.PC.pc_glitch_current)+" ("+str(st.session_state.PC.pc_glitch_roll)+')</div>'
-    st.markdown('<div style="width:100%;display:flex;justify-content:space-between">'+headerString+'</div>',unsafe_allow_html=True)
+    st.markdown('<div class="char_stat_block">'+headerString+'</div>',unsafe_allow_html=True)
     st.divider()
-    
-    st.write(st.session_state.PC.pc_desc)
+    col1, col2, col3 = st.columns([1.25,0.125,2.5],vertical_alignment="top")
+    with col1:
+        with st.container(key="secondary_stat_sidebar"):
+            #HP
+            subcol1, subcol2, subcol3, subcol4 = st.columns([1,1,0.25,1.5],vertical_alignment="center")
+            with subcol1:
+                st.write("# HP:")
+            with subcol2:
+                st.number_input("HP", key="c_pc_hp_current", on_change=strc.update_char, step=1, label_visibility="collapsed")
+            with subcol3:
+                st.write("# /")
+            with subcol4:
+                with st.popover(str(st.session_state.PC.pc_hp_max)):
+                    st.write("Base HP")
+                    st.number_input("Base HP", key="c_pc_hp_max", on_change=strc.update_char, step=1, label_visibility="collapsed")
+            st.divider()
+            #Glitches
+            subcol1, subcol2 = st.columns([2,1.5],vertical_alignment="center")
+            with subcol1:
+                st.write("# Glitches:")
+            with subcol2:
+                st.number_input("Glitches", key="c_pc_glitch_current", on_change=strc.update_char, step=1, label_visibility="collapsed")
+            with st.container(key="glitch_reset_container"):
+                st.button("Reset ("+st.session_state.PC.pc_glitch_roll+")", use_container_width=True)
+            st.divider()
+            #Carrying capacity
+            subcol1, subcol2, subcol3, subcol4 = st.columns([2,0.5,0.5,1.5],vertical_alignment="center")
+            with subcol1:
+                st.write("# Carrying Capacity:")
+            with subcol2:
+                st.write("# " + str(st.session_state.PC.getCurrentCarry()))
+            with subcol3:
+                st.write("# /")
+            with subcol4:
+                with st.popover(str(st.session_state.PC.pc_carrying_max)):
+                    st.write("Base Carrying Capacity")
+                    st.number_input("Base Carry Cap", key="c_pc_carrying_max", on_change=strc.update_char, step=1, label_visibility="collapsed")
+            st.divider()
+            #Credits
+            subcol1, subcol2 = st.columns([1,2],vertical_alignment="center")
+            with subcol1:
+                st.write("# Credits:")
+            with subcol2:
+                st.number_input("Credits", key="c_pc_creds", on_change=strc.update_char, step=1, label_visibility="collapsed")
+            #Debt
+            subcol1, subcol2 = st.columns([1,3],vertical_alignment="center")
+            with subcol1:
+                st.write("# Debt:")
+            with subcol2:
+                st.number_input("Debt", key="c_pc_debt", on_change=strc.update_char, step=1, label_visibility="collapsed")
+    with col2:
+        pass
+    with col3:
+        st.write(st.session_state.PC.pc_desc)
