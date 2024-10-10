@@ -68,23 +68,37 @@ def burnPCSecondaryStats():
 #calculate secondary stats - return true if successful
 def burnPCDesc():
     try:
+        if not st.session_state.t_char_name:
+            return False
         st.session_state.PC.pc_name = st.session_state.t_char_name
-        st.session_state.PC.pc_desc = st.session_state.t_char_style.capitalize()
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.PC.pc_class
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + "; " + st.session_state.t_char_feature.lower()
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + ", " + st.session_state.t_char_quirk.lower()
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + lu.randomSelectWordTable(wordTableDB["PreFieldObsession"])
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.t_char_obsession.lower()
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + lu.randomSelectWordTable(wordTableDB["PreFieldDesire"])
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.t_char_desire.lower()
-        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + ".  \nYou owe money to " + st.session_state.t_char_lender.lower() + "."
+        st.session_state.PC.pc_desc = ""
+        if st.session_state.t_char_style:
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + st.session_state.t_char_style.capitalize() + " "
+        st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + st.session_state.PC.pc_class
+        if st.session_state.t_char_feature or st.session_state.t_char_quirk:
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + "; "
+        if st.session_state.t_char_feature:
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + st.session_state.t_char_feature.lower()
+            if st.session_state.t_char_quirk:
+                st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + ", "
+        if st.session_state.t_char_quirk:
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + st.session_state.t_char_quirk.lower()
+        if st.session_state.t_char_obsession:
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + lu.randomSelectWordTable(wordTableDB["PreFieldObsession"])
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.t_char_obsession.lower() + "."
+        if st.session_state.t_char_desire:
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + lu.randomSelectWordTable(wordTableDB["PreFieldDesire"])
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + " " + st.session_state.t_char_desire.lower() + "."
+        if st.session_state.t_char_lender:
+            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + "  \nYou owe money to " + st.session_state.t_char_lender.lower() + "."
         if "RandomClassLore" in st.session_state.class_table:
-            st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + "  \n" + st.session_state.class_table["RandomClassLorePrompt"] + " " + st.session_state.t_char_class_lore
+            if st.session_state.t_char_class_lore:
+                st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + "  \n" + st.session_state.class_table["RandomClassLorePrompt"] + " " + st.session_state.t_char_class_lore
         if "ClassLore" in st.session_state.class_table:
             st.session_state.PC.pc_desc = st.session_state.PC.pc_desc + "  \n" + st.session_state.class_table["ClassLore"]
-        return True
     except:
         return False
+    return True
 
 #calculate secondary stats - return true if successful
 def burnPCStuff():
@@ -214,7 +228,7 @@ def writeStuffSelection():
     enumStart = 0
     if "RandomClassStuff" in st.session_state.class_table.keys():
         enumStart = 1
-        st.header(st.session_state.class_table["RandomClassStuffText"] + ":")
+        st.header(st.session_state.class_table["RandomClassStuffText"])
         entryID = "0"
         insertStuffEntry(lcd.getEmptyRandomItem(), entryID, customStuffTable = st.session_state.class_table["RandomClassStuff"])
         st.header("You also have:")
@@ -403,7 +417,7 @@ def randomSecondaryStats():
     lu.changeNumInput("t_char_debt","err_text_secondary_stat")
     
 def randomDesc():
-    st.session_state.t_char_name = lu.randomSelectWordTable(wordTableDB["Name"]).lower()
+    st.session_state.t_char_name = lu.randomSelectWordTable(wordTableDB["Name"])
     st.session_state.t_char_style = lu.randomSelectWordTable(wordTableDB["Style"]).lower()
     st.session_state.t_char_feature = lu.randomSelectWordTable(wordTableDB["Feature"]).lower()
     st.session_state.t_char_quirk = lu.randomSelectWordTable(wordTableDB["Quirk"]).lower()

@@ -118,7 +118,7 @@ def dispCharCreation():
             col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
             with col1:
                 st.write(descFieldList[0]+":")
-                st.text_input(descFieldList[0]+":", key = "t_char_name", label_visibility="collapsed", on_change=lu.resetErrField, args=("err_text_desc"))
+                st.text_input(descFieldList[0]+":", key = "t_char_name", label_visibility="collapsed", on_change=lu.resetErrField, args=["err_text_desc"])
             with col2:
                 st.write(descFieldList[1]+":")
                 st.text_input(descFieldList[1]+":", key = "t_char_feature", label_visibility="collapsed")

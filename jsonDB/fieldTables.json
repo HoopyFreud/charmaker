@@ -58,7 +58,7 @@
         "err_text_stat": "Enter valid stat rolls",
         "err_text_class": "Select a class",
         "err_text_secondary_stat": "Enter valid secondary stat rolls",
-        "err_text_desc": "Fill all description fields",
+        "err_text_desc": "Enter a name (other fields optional)",
         "err_text_stuff": "Invalid field entry"
     }
 }

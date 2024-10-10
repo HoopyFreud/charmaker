@@ -44,7 +44,7 @@ def finalizeSecondaryStats():
 def finalizeDesc():
     valid_desc = lc.burnPCDesc()
     if valid_desc:
-        st.session_state.err_text_stuff = False
+        st.session_state.err_text_desc = False
         st.session_state.stage = 5
     else:
         st.session_state.err_text_desc = True

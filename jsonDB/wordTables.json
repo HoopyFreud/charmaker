@@ -546,9 +546,9 @@
     ],
     "PreFieldDesire":
     [
-        ". You desire",
-        ". You want",
-        ". You seek"
+        "You desire",
+        "You want",
+        "You seek"
     ],
     "PreFieldObsession":
     [
