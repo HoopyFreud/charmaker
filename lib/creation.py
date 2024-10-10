@@ -372,7 +372,7 @@ def writeChildStuff(stuff, entryID, customStuffTable):
     elif "SubStuff" in stuff.p_data.keys():
         insertStuffEntry(stuff.p_data["SubStuff"], subEntryID)
 
-#callback function for input changes to reset error unconditionally
+#callback function for random stuff selection to reset error fields and nuke the session state
 def resetStuffSelector(subEntryID,errKey):
     for key in st.session_state.keys():
         if key.startswith("stuffErr_"+subEntryID) or key.startswith("t_stuffOption_"+subEntryID) or key.startswith("t_stuffProp_"+subEntryID):
