@@ -195,12 +195,12 @@ def getUnknownFieldValues(stuffObj,unknownPropList,entryID):
 #process all stuff in each class table
 def processClassTable(classTable):
     if "Stuff" in classTable.keys():
-        classTable["Stuff"] = [lu.processStuff(stuffEntry, source = "Stuff") for stuffEntry in classTable["Stuff"]]
+        classTable["Stuff"] = [lu.processStuff(stuffEntry) for stuffEntry in classTable["Stuff"]]
     if "ClassStuff" in classTable.keys():
         #we add a number to the source here to ensure that we will be able to set up unique IDs for these fields later. Stuff is already uniquely identified and RandomClassStuff is a single field, so neither of them need it.
-        classTable["ClassStuff"] = [lu.processStuff(stuffEntry, source = "ClassStuff"+"."+str(stuffIndex)) for stuffIndex,stuffEntry in enumerate(classTable["ClassStuff"])]
+        classTable["ClassStuff"] = [lu.processStuff(stuffEntry) for stuffIndex,stuffEntry in enumerate(classTable["ClassStuff"])]
     if "RandomClassStuff" in classTable.keys():
-        classTable["RandomClassStuff"] = {k: lu.processStuff(v, source = "RandomClassStuff") for k,v in classTable["RandomClassStuff"].items()}
+        classTable["RandomClassStuff"] = {k: lu.processStuff(v) for k,v in classTable["RandomClassStuff"].items()}
     if "StuffReplacement" in classTable.keys():
         classTable["StuffReplacement"] = {k: lu.processStuff(v) for k,v in classTable["StuffReplacement"].items()}
     return classTable
@@ -208,7 +208,7 @@ def processClassTable(classTable):
 #replace a stuff entry with a different stuff entry that should replace it. Stuff replacement is by name.
 def processStuffReplacement(stuffTableEntry):
     if stuffTableEntry.p_name in st.session_state.class_table["StuffReplacement"].keys():
-        stuffTableEntry = lu.processStuff(st.session_state.class_table["StuffReplacement"][stuffTableEntry.p_name], source=stuffTableEntry.p_source)
+        stuffTableEntry = lu.processStuff(st.session_state.class_table["StuffReplacement"][stuffTableEntry.p_name])
     return stuffTableEntry
 
 def writeStuffSelection():
@@ -433,5 +433,5 @@ def getClassObject(tableName: str):
 mapClassTable = lu.fieldTableDB["ClassTableDict"]
 stuffTableDB = lu.getJsonObject("stuffTables.json")
 for table in list(stuffTableDB.keys()):
-    stuffTableDB[table] = {k: lu.processStuff(v, source = table) for k,v in stuffTableDB[table].items()}
+    stuffTableDB[table] = {k: lu.processStuff(v) for k,v in stuffTableDB[table].items()}
 wordTableDB = lu.getJsonObject("wordTables.json")

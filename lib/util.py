@@ -101,7 +101,7 @@ def statifyString(inString):
     return inString
 
 #turn JSON dictionaries into StuffField objects
-def processStuff(stuff, source = None):
+def processStuff(stuff):
     if not isinstance(stuff, lcd.StuffField):
         stuffType = list(stuff.keys())[0]
         if "Name" in list(stuff[stuffType].keys()):
@@ -113,19 +113,16 @@ def processStuff(stuff, source = None):
             #need to deepcopy here so we don't accidentally change properties of things in stuffDB when we update()
             stuffFieldObj = copy.deepcopy(stuffDB[stuff[stuffType].pop("ID")])
             stuffFieldObj.p_data.update(stuff[stuffType])
-            stuffFieldObj.p_source = source
             if stuffName:
                 stuffFieldObj.p_name = stuffName
         else:
-            stuffFieldObj =  lcd.StuffField(stuffType,stuffName,stuff[stuffType],p_source=source)
+            stuffFieldObj =  lcd.StuffField(stuffType,stuffName,stuff[stuffType])
             if stuffFieldObj.p_type == "StuffSet":
-                stuffFieldObj.p_data["StuffList"] = [processStuff(subItem, source = source) for subItem in stuffFieldObj.p_data["StuffList"]]
+                stuffFieldObj.p_data["StuffList"] = [processStuff(subItem) for subItem in stuffFieldObj.p_data["StuffList"]]
             if "SubStuff" in stuffFieldObj.p_data.keys():
-                stuffFieldObj.p_data["SubStuff"] = processStuff(stuffFieldObj.p_data["SubStuff"], source = source)
+                stuffFieldObj.p_data["SubStuff"] = processStuff(stuffFieldObj.p_data["SubStuff"])
     else:
         stuffFieldObj = stuff
-        if source:
-            stuffFieldObj.p_source = source
     return stuffFieldObj
     
 def generateObjectFromStuffField(stuff):

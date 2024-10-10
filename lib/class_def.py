@@ -101,21 +101,19 @@ class StuffField:
     p_type = None
     p_name = None
     p_data = None
-    p_source = None
     
-    def __init__(self, p_type, p_name, p_data, p_source = None):
+    def __init__(self, p_type, p_name, p_data):
         self.p_type = p_type
         self.p_name = p_name
         self.p_data = p_data
-        self.p_source = p_source
         
     def __eq__(self, other):
         if self and other:
-            return [self.p_type, self.p_name, self.p_data, self.p_source] == [other.p_type, other.p_name, other.p_data, other.p_source]
+            return [self.p_type, self.p_name, self.p_data] == [other.p_type, other.p_name, other.p_data]
         return False
         
     def as_dict(self):
-        return {"Type":self.p_type, "Name":self.p_name, "Data":self.p_data, "Source":self.p_source}
+        return {"Type":self.p_type, "Name":self.p_name, "Data":self.p_data}
 
 def getEmptyRandomItem():
     return StuffField("RandomItem", None, {})
