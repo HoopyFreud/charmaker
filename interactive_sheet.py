@@ -78,11 +78,11 @@ def dispCharSheet():
             with subcol1:
                 st.header("Description:", anchor=False)
             with subcol2:
-                if st.session_state.select_disable_sheet_desc:
+                if st.session_state.stage==-1:
                     st.button("Edit", key="sheet_edit_desc", on_click=lsc.sheetEditDesc, use_container_width=True)
                 else:
                     st.button("Save", key="sheet_save_desc", on_click=lsc.sheetSaveDesc, use_container_width=True)
-            if st.session_state.select_disable_sheet_desc:
+            if st.session_state.stage==-1:
                 for descLine in st.session_state.PC.pc_desc.splitlines(): st.write(descLine)
             else:
                 st.text_area("Description", height=275, key="c_pc_desc", label_visibility="collapsed")

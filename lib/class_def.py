@@ -116,4 +116,6 @@ class StuffField:
         
     def as_dict(self):
         return {"Type":self.p_type, "Name":self.p_name, "Data":self.p_data, "Source":self.p_source}
-        
+
+def getEmptyRandomItem():
+    return StuffField("RandomItem", None, {})

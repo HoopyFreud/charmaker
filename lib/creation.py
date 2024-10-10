@@ -1,3 +1,4 @@
+from itertools import count
 import lib.util as lu
 import lib.class_def as lcd
 import streamlit as st
@@ -87,91 +88,80 @@ def burnPCDesc():
 
 #calculate secondary stats - return true if successful
 def burnPCStuff():
-    allStuff = []
+    st.session_state.PC.pc_stuff = []
+    enumStart = 0
     if "RandomClassStuff" in st.session_state.class_table.keys():
-        if not addStuffToSheet(allStuff,getObjectFromStuffField(lcd.StuffField("RandomItem", None, {}),"RandomClassStuff")):
-            return False
+        enumStart = 1
+        appendOrExtendStuffList(getStuffFromField(lcd.getEmptyRandomItem(),"0"))
     stuffList = st.session_state.class_table["Stuff"]
     if "ClassStuff" in st.session_state.class_table.keys():
         stuffList = st.session_state.class_table["ClassStuff"] + stuffList
-    for stuffItem in stuffList:
-        if not addStuffToSheet(allStuff,getObjectFromStuffField(stuffItem, stuffItem.p_source)):
-            return False
-    st.session_state.PC.pc_stuff = allStuff
-    return True
-        
-def addStuffToSheet(stuffList,newItem):
-    if newItem:
-        if isinstance(newItem,list):
-            stuffList.extend(newItem)
-        else:
-            stuffList.append(newItem)
-        return True
-    else:
+    for stuffNumber,stuffItem in enumerate(stuffList, start=enumStart):
+        appendOrExtendStuffList(getStuffFromField(stuffItem,str(stuffNumber)))
+    if None in st.session_state.PC.pc_stuff:
         return False
+    return True
     
 #calculate secondary stats - return true if successful
-def traceStuff(key, prefix):
-    stuffFieldObj = st.session_state["t_"+key]
-    if not stuffFieldObj:
-        st.session_state["err_text_"+key] = True
-        return None
-    tracedObj = getObjectFromStuffField(stuffFieldObj, prefix)
-    return tracedObj
-    
-def getObjectFromStuffField(stuff, prefix):
-    err = False
-    match stuff.p_type:
-        case "StuffSet":
-            setPrefix = prefix+"."+stuff.p_name if stuff.p_name else prefix+"."+prefix
-            resultList = [getObjectFromStuffField(stuffItem, setPrefix+"."+str(subIndex)) for subIndex, stuffItem in enumerate(stuff.p_data["StuffList"])]
-            if None in resultList:
-                return None
-            else:
-                return resultList
-        case "RandomItem":
-            keyName = prefix+"."+stuff.p_data["RandomTable"] if "RandomTable" in stuff.p_data.keys() else prefix
-            subPrefix = prefix+"."+stuff.p_data["RandomTable"] if "RandomTable" in stuff.p_data.keys() else prefix+"."+prefix
-            return traceStuff(keyName, subPrefix)
-        case _:
-            stuffObj = lu.generateObjectFromStuffField(stuff)
-            if stuffObj is None:
-                return None
-    #look for sub-stuff
-    if "SubStuff" in stuff.p_data.keys():
-        stuffObj.p_sub_stuff = getObjectFromStuffField(stuff.p_data["SubStuff"], prefix+"."+prefix)
-        if not stuffObj.p_sub_stuff:
-            err = True
-    if "Unknown" in stuff.p_data.keys():
-        err = getUnknownFieldValues(stuffObj,stuff.p_data["Unknown"],prefix)
-    if err:
-        return None
+def appendOrExtendStuffList(newStuff):
+    if isinstance(newStuff,list):
+        st.session_state.PC.pc_stuff.extend(newStuff)
     else:
+        st.session_state.PC.pc_stuff.append(newStuff)
+    
+#calculate secondary stats - return true if successful
+def traceStuff(entryID, subEntryID):
+    stuffFieldObj = st.session_state[getOptionKey(entryID)]
+    if not stuffFieldObj:
+        st.session_state[getErrKey(entryID)] = True
+        return None
+    return getStuffFromField(stuffFieldObj, subEntryID)
+    
+def getStuffFromField(stuff, entryID):
+    subPrefix = entryID
+    subEntryID = subPrefix + "_0"
+    if stuff.p_type == "StuffSet":
+        returnList = []
+        for stuffNumber,stuffItem in enumerate(stuff.p_data["StuffList"]):
+            subEntryID = subPrefix + "_" + str(stuffNumber)
+            returnList.append(getStuffFromField(stuffItem,subEntryID))
+        if None in returnList:
+            return None
+        return returnList
+    elif stuff.p_type == "RandomItem":
+        return traceStuff(entryID, subEntryID)
+    else:
+        stuffObj = lu.generateObjectFromStuffField(stuff)
+        if stuffObj is None:
+            return None
+        #look for sub-stuff
+        if "SubStuff" in stuff.p_data.keys():
+            stuffObj.p_sub_stuff = getStuffFromField(stuff.p_data["SubStuff"],subEntryID)
+            if not stuffObj.p_sub_stuff:
+                return None
+        if "Unknown" in stuff.p_data.keys():
+            if not getUnknownFieldValues(stuffObj,stuff.p_data["Unknown"],entryID): 
+                return None
         return stuffObj
         
-def getUnknownFieldValues(stuffObj,unknownPropList,prefix):
-    for prop in unknownPropList:
-        #session state key is built from the parent element's viewstate key, plus the name of the *object* that the field belongs to, plus the name of the field
-        #note that part 2 is omitted if it does not exist
-        #this means that if we change the name of the object (by selecting a new one) the error state should not persist
-        keyName = prefix
-        if stuffObj.p_name:
-            keyName = keyName+"."+stuffObj.p_name
-        errBoxID = "err_text_"+keyName
-        keyName = keyName+"."+prop["Field"]
-        if prop["Entry"] == "Number":
-            fieldValue = st.session_state["t_"+keyName]
-            if fieldValue:
-                fieldValue = ne.evaluate(lu.statifyString(fieldValue)).item()
-        elif prop["Entry"] == "FixedText":
+def getUnknownFieldValues(stuffObj,unknownPropList,entryID):
+    errKey = getErrKey(entryID)
+    errCheck = st.session_state[errKey]
+    for propID, prop in enumerate(unknownPropList):
+        propKey = getPropKey(entryID, str(propID))
+        if prop["Entry"] == "FixedText":
             fieldValue = prop["Value"]
-            if fieldValue:
+        else:
+            fieldValue = st.session_state[propKey]
+        if fieldValue is None:
+            st.session_state[errKey] = True
+            return False
+        if prop["Entry"] != "Dropdown":
+            try:
                 fieldValue = ne.evaluate(lu.statifyString(fieldValue)).item()
-        elif prop["Entry"] == "Dropdown":
-            fieldValue = st.session_state["t_"+keyName]
-        if not fieldValue:
-            st.session_state[errBoxID] = True
-            return True
+            except:
+                st.session_state[errKey] = True
+                return False
         match prop["Field"]:
             case "Name":
                 stuffObj.p_name = fieldValue
@@ -198,7 +188,9 @@ def getUnknownFieldValues(stuffObj,unknownPropList,prefix):
                 stuffObj.p_uses = fieldValue
             case _:
                 st.write("Unknown field value: "+prop["Field"])
-    return False
+                st.session_state[errKey] = True
+                return False
+    return True
             
 #process all stuff in each class table
 def processClassTable(classTable):
@@ -219,29 +211,51 @@ def processStuffReplacement(stuffTableEntry):
         stuffTableEntry = lu.processStuff(st.session_state.class_table["StuffReplacement"][stuffTableEntry.p_name], source=stuffTableEntry.p_source)
     return stuffTableEntry
 
+def writeStuffSelection():
+    enumStart = 0
+    if "RandomClassStuff" in st.session_state.class_table.keys():
+        enumStart = 1
+        st.header(st.session_state.class_table["RandomClassStuffText"] + ":")
+        entryID = "0"
+        insertStuffEntry(lcd.getEmptyRandomItem(), entryID, customStuffTable = st.session_state.class_table["RandomClassStuff"])
+        st.header("You also have:")
+    else:
+        st.header("You have:")
+    stuffList = st.session_state.class_table["Stuff"]
+    if "ClassStuff" in st.session_state.class_table.keys():
+        stuffList = st.session_state.class_table["ClassStuff"] + stuffList
+    for stuffNumber,stuffItem in enumerate(stuffList, start=enumStart):
+        entryID = str(stuffNumber)
+        insertStuffEntry(stuffItem, entryID)
+
 #Insert a stuff entry into the character builder UI
 #the prefix we pass into the sub-builders is just the prefix we get
 #at top level this will be the name of the character sheet *field* we are filling out
 #ie gear3, or ClassStuff.1
-def insertStuffEntry(stuff, prefix, customStuffTable = None):
-    errBoxID = "err_text_"+prefix
-    if stuff.p_type == "RandomItem" and "RandomTable" in stuff.p_data.keys():
-        errBoxID = errBoxID+"."+stuff.p_data["RandomTable"]
-    elif stuff.p_name:
-        errBoxID = errBoxID+"."+stuff.p_name
-    if errBoxID not in st.session_state:
-        st.session_state[errBoxID] = False
+def insertStuffEntry(stuff, entryID, customStuffTable = None):
+    errKey = getErrKey(entryID)
+    if errKey not in st.session_state:
+        st.session_state[errKey] = False
     with st.container(border=True):
-        writeStuffFixedText(stuff)
+        writeFixedText(stuff)
         if "Unknown" in stuff.p_data.keys():
-            writeStuffUnknownFields(stuff, prefix)
-        writeStuffChildStuff(stuff, prefix, customStuffTable)
+            writeUnknownFields(stuff, entryID)
+        writeChildStuff(stuff, entryID, customStuffTable)
         #set up the error box
-        if st.session_state[errBoxID]:
+        if st.session_state[errKey]:
             st.error(lu.errTextDB["err_text_stuff"])
+    
+def getErrKey(entryID):
+    return "stuffErr_" + entryID
+
+def getOptionKey(entryID):
+    return "t_stuffOption_" + entryID
+    
+def getPropKey(entryID, propID):
+    return "t_stuffProp_" + entryID + "_" + propID
 
 #fixed text is stuff like name and description - no lists, no unknowns, no subfields
-def writeStuffFixedText(stuff):
+def writeFixedText(stuff):
     if stuff.p_name:
         st.subheader(stuff.p_name)
     if "Description" in stuff.p_data.keys():
@@ -287,34 +301,31 @@ def writeDamage(damageField):
             st.write(damageField["Description"])
 
 #write unknown fields - stuff like mags and number of uses and undetermined bonuses
-def writeStuffUnknownFields(stuff, prefix):
+def writeUnknownFields(stuff, entryID):
     #need this to check for errors in multiple subfields on page load
     #session state key is built from the parent element's viewstate key, plus the name of the *object* that the field belongs to, plus the name of the field
     #note that part 2 is omitted if it does not exist
     #this means that if we change the name of the object (by selecting a new one) the error state should not persist
-    keyName = prefix
-    if stuff.p_name:
-        keyName = keyName+"."+stuff.p_name
-    errBoxID = "err_text_"+keyName
-    errCheck = st.session_state[errBoxID]
-    for prop in stuff.p_data["Unknown"]:
+    errKey = getErrKey(entryID)
+    errCheck = st.session_state[errKey]
+    for propID, prop in enumerate(stuff.p_data["Unknown"]):
         dispName = prop["Field"]+":"
         if "DispName" in prop.keys():
             dispName = prop["DispName"]+":"
-        propKeyName = keyName+"."+prop["Field"]
-        if "t_"+propKeyName not in st.session_state:
-            st.session_state["t_"+propKeyName] = None
+        propKey = getPropKey(entryID, str(propID))
+        if propKey not in st.session_state:
+            st.session_state[propKey] = None
         #select data entry method
         st.write(dispName)
         if prop["Entry"] == "Number":
             rollString = lu.statifyString(prop["Value"])
             col1, col2 = st.columns([5,1],vertical_alignment="bottom")
             with col1:
-                st.text_input(dispName, key = "t_"+propKeyName, label_visibility="collapsed", placeholder=rollString, on_change=lu.changeNumInput, args=["t_"+propKeyName,errBoxID], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stuff)
+                st.text_input(dispName, key=propKey, label_visibility="collapsed", placeholder=rollString, on_change=lu.changeNumInput, args=[propKey,errKey], kwargs={"roll": rollString})
             with col2:
-                st.button('Random', key = propKeyName+"_random", on_click=lu.randomNumber, args=["t_"+propKeyName,rollString], kwargs={"errField": errBoxID,"lowerLimit":1}, disabled=st.session_state.select_disable_stuff)
+                st.button('Random', key=propKey+"_random", on_click=lu.randomNumber, args=[propKey,rollString], kwargs={"errKey": errKey,"lowerLimit":1})
             #check for errors on page load
-            errCheck = lu.changeNumInput("t_"+propKeyName,errBoxID,roll = rollString,override=errCheck)
+            errCheck = lu.changeNumInput(propKey,errKey,roll=rollString,override=errCheck)
         elif prop["Entry"] == "FixedText":
             with st.container(border=True):
                 st.write(lu.statifyString(prop["Value"]))
@@ -323,29 +334,25 @@ def writeStuffUnknownFields(stuff, prefix):
             rollString = "1d"+str(len(dropdownList))
             col1, col2 = st.columns([5,1],vertical_alignment="bottom")
             with col1:
-                st.selectbox(dispName, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry), key="t_"+propKeyName, label_visibility="collapsed", index=None, placeholder=rollString, on_change=lu.resetErrField, args=[errBoxID], disabled=st.session_state.select_disable_stuff)
+                st.selectbox(dispName, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry), key=propKey, label_visibility="collapsed", index=None, placeholder=rollString, on_change=lu.resetErrField, args=[errKey])
             with col2:
-                st.button('Random', key = propKeyName+"_random", on_click=lu.randomSelector, args=["t_"+propKeyName,dropdownList], kwargs={"errField": errBoxID}, disabled=st.session_state.select_disable_stuff)
+                st.button('Random', key=propKey+"_random", on_click=lu.randomSelector, args=[propKey,dropdownList], kwargs={"errKey": errKey})
 
 #write subfields - objects within the object
-def writeStuffChildStuff(stuff, prefix, customStuffTable):
+def writeChildStuff(stuff, entryID, customStuffTable):
+    errKey = getErrKey(entryID)
+    subPrefix = entryID
+    subEntryID = subPrefix + "_0"
     #if the object is a list of things, give them each an entry
-    #the prefix should just be the parent prefix with a .index inserted for uniqueness
     if stuff.p_type == "StuffSet":
-        setPrefix = prefix+"."+stuff.p_name if stuff.p_name else prefix+"."+prefix
-        for subIndex, stuffItem in enumerate(stuff.p_data["StuffList"]):
-            insertStuffEntry(stuffItem, setPrefix+"."+str(subIndex))
-    #if the object is a random item, create a selectbox for it
-    #the session state ID for the selector should be the parent's prefix, plus the random table we consult. The subprefix will be the same as the state ID selector, UNLESS there is no random table given, in which case we repeat the prefix again
-    #this sounds insane, but!
-    #for the key, we want to avoid name clashes with cousin objects from different tables with the same name. For the prefix, we want to avoid name clashes with the parent.
+        for stuffNumber,stuffItem in enumerate(stuff.p_data["StuffList"]):
+            subEntryID = subPrefix + "_" + str(stuffNumber)
+            insertStuffEntry(stuffItem, subEntryID)
     elif stuff.p_type == "RandomItem":
-        keyName = prefix+"."+stuff.p_data["RandomTable"] if "RandomTable" in stuff.p_data.keys() else prefix
-        errBoxID = "err_text_"+keyName
-        subPrefix = prefix+"."+stuff.p_data["RandomTable"] if "RandomTable" in stuff.p_data.keys() else prefix+"."+prefix
         #set up the key if it doesn't already exist and get the table
-        if "t_"+keyName not in st.session_state:
-            st.session_state["t_"+keyName] = None
+        optionKey = getOptionKey(entryID)
+        if optionKey not in st.session_state:
+            st.session_state[optionKey] = None
         if customStuffTable:
             dropdownTable = customStuffTable
         else:
@@ -363,15 +370,22 @@ def writeStuffChildStuff(stuff, prefix, customStuffTable):
         rollString = "1d"+str(len(dropdownList))
         col1, col2 = st.columns([5,1],vertical_alignment="bottom")
         with col1:
-            st.selectbox(labelString, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry.p_name), key="t_"+keyName, index=None, placeholder=rollString, on_change=lu.resetErrField, args=[errBoxID], label_visibility="collapsed", disabled=st.session_state.select_disable_stuff)
+            selectedStuffObject = st.selectbox(labelString, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry.p_name), key=optionKey, index=None, placeholder=rollString, on_change=resetStuffSelector, args=[subEntryID,errKey], label_visibility="collapsed")
         with col2:
-            st.button('Random', key = keyName+"_random", on_click=lu.randomSelector, args=["t_"+keyName,dropdownList], kwargs={"errField": errBoxID}, disabled=st.session_state.select_disable_stuff)
-        if st.session_state["t_"+keyName]:
-            selectedStuffObject = st.session_state["t_"+keyName]
-            insertStuffEntry(selectedStuffObject, subPrefix)
+            st.button('Random', key=optionKey+"_random", on_click=lu.randomSelector, args=[optionKey,dropdownList], kwargs={"errKey": errKey})
+        if selectedStuffObject:
+            insertStuffEntry(selectedStuffObject, subEntryID)
     #SubStuff gets a double-name for the same reason as above
-    if "SubStuff" in stuff.p_data.keys():
-        insertStuffEntry(stuff.p_data["SubStuff"], prefix+"."+prefix)
+    elif "SubStuff" in stuff.p_data.keys():
+        insertStuffEntry(stuff.p_data["SubStuff"], subEntryID)
+
+#callback function for input changes to reset error unconditionally
+def resetStuffSelector(subEntryID,errKey):
+    for key in st.session_state.keys():
+        if key.startswith("stuffErr_"+subEntryID) or key.startswith("t_stuffOption_"+subEntryID) or key.startswith("t_stuffProp_"+subEntryID):
+            del st.session_state[key]
+    lu.resetErrField(errKey)
+    
     
 def randomStats():
     st.session_state.t_char_agi = str(lu.roll(lu.statifyString(st.session_state.class_table["AgilityRoll"])))

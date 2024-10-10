@@ -7,16 +7,16 @@ import streamlit as st
 def dispCharCreation():
     #ROW 1 - CLASS
     if st.session_state.stage >= 1:
-        if not st.session_state.select_disable_class:
+        if st.session_state.stage==1:
             st.header("Class:")
             dropdownList = lu.fieldTableDB["ClassTable"]
             col1, col2, col3 = st.columns([10,2,2],vertical_alignment="bottom")
             with col1:
-                st.radio('Class', dropdownList, horizontal=True, key="t_char_class", label_visibility="collapsed", index=None, disabled=st.session_state.select_disable_class)
+                st.radio('Class', dropdownList, horizontal=True, key="t_char_class", label_visibility="collapsed", index=None)
             with col2:
-                st.button('Random', key = "class_random", on_click = lu.randomSelector, args=["t_char_class",dropdownList], disabled=st.session_state.select_disable_class)
+                st.button('Random', key = "class_random", on_click = lu.randomSelector, args=["t_char_class",dropdownList])
             with col3:
-                st.button('Finalize', key = "class_finalize", on_click = lsc.finalizeClass, disabled=st.session_state.select_disable_class)
+                st.button('Finalize', key = "class_finalize", on_click = lsc.finalizeClass)
             if st.session_state.err_text_class:
                 st.error(lu.errTextDB["err_text_class"])
         else:
@@ -25,33 +25,33 @@ def dispCharCreation():
     #ROW 2 - STATS
     if st.session_state.stage >= 2:
         statList = lu.fieldTableDB["StatTable"]
-        if not st.session_state.select_disable_stat:
+        if st.session_state.stage==2:
             st.header("Stats:")
             col1, col2, col3, col4, col5, col6, col7 = st.columns([1,1,1,1,1,1,1],vertical_alignment="bottom")
             with col1:
                 st.write(statList[0]+":")
                 rollString = lu.statifyString(st.session_state.class_table["AgilityRoll"])
-                st.text_input(statList[0]+":", key = "t_char_agi", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_agi","err_text_stat"], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stat)
+                st.text_input(statList[0]+":", key = "t_char_agi", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_agi","err_text_stat"], kwargs={"roll": rollString})
             with col2:
                 st.write(statList[1]+":")
                 rollString = lu.statifyString(st.session_state.class_table["KnowledgeRoll"])
-                st.text_input(statList[1]+":", key = "t_char_knw", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_knw","err_text_stat"], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stat)
+                st.text_input(statList[1]+":", key = "t_char_knw", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_knw","err_text_stat"], kwargs={"roll": rollString})
             with col3:
                 st.write(statList[2]+":")
                 rollString = lu.statifyString(st.session_state.class_table["PresenceRoll"])
-                st.text_input(statList[2]+":", key = "t_char_pre", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_pre","err_text_stat"], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stat)
+                st.text_input(statList[2]+":", key = "t_char_pre", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_pre","err_text_stat"], kwargs={"roll": rollString})
             with col4:
                 st.write(statList[3]+":")
                 rollString = lu.statifyString(st.session_state.class_table["StrengthRoll"])
-                st.text_input(statList[3]+":", key = "t_char_str", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_str","err_text_stat"], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stat)
+                st.text_input(statList[3]+":", key = "t_char_str", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_str","err_text_stat"], kwargs={"roll": rollString})
             with col5:
                 st.write(statList[4]+":")
                 rollString = lu.statifyString(st.session_state.class_table["ToughnessRoll"])
-                st.text_input(statList[4]+":", key = "t_char_tou", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_tou","err_text_stat"], kwargs={"roll": rollString}, disabled=st.session_state.select_disable_stat)
+                st.text_input(statList[4]+":", key = "t_char_tou", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_tou","err_text_stat"], kwargs={"roll": rollString})
             with col6:
-                st.button('Random', key = "stat_random", on_click = lc.randomStats, disabled=st.session_state.select_disable_stat)
+                st.button('Random', key = "stat_random", on_click = lc.randomStats)
             with col7:
-                st.button('Finalize', key = "stat_finalize", on_click = lsc.finalizeStats, disabled=st.session_state.select_disable_stat)
+                st.button('Finalize', key = "stat_finalize", on_click = lsc.finalizeStats)
             if st.session_state.err_text_stat:
                 st.error(lu.errTextDB["err_text_stat"])
         else:
@@ -73,16 +73,16 @@ def dispCharCreation():
     #ROW 3 - SECONDARY STATS
         st.header("Derived Stats:")
         secondaryStatList = lu.fieldTableDB["SecondaryStatTable"]
-        if not st.session_state.select_disable_secondary_stat:
+        if st.session_state.stage==3:
             col1, col2, col3, col4, col5, col6, col7 = st.columns([1,1,1,1,1,1,1],vertical_alignment="bottom")
             with col1:
                 st.write(secondaryStatList[0]+":")
                 rollString = lu.statifyString(st.session_state.class_table["HPRoll"])
-                st.text_input(secondaryStatList[0]+":", key = "t_char_hpmax", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_hpmax","err_text_secondary_stat"), kwargs={"roll": rollString}, disabled=st.session_state.select_disable_secondary_stat)
+                st.text_input(secondaryStatList[0]+":", key = "t_char_hpmax", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_hpmax","err_text_secondary_stat"), kwargs={"roll": rollString})
             with col2:
                 st.write(secondaryStatList[1]+":")
                 rollString = lu.statifyString(st.session_state.class_table["GlitchRoll"])
-                st.text_input(secondaryStatList[1]+":", key = "t_char_glitch", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_glitch","err_text_secondary_stat"), kwargs={"roll": rollString}, disabled=st.session_state.select_disable_secondary_stat)
+                st.text_input(secondaryStatList[1]+":", key = "t_char_glitch", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_glitch","err_text_secondary_stat"), kwargs={"roll": rollString})
             with col3:
                 st.write(secondaryStatList[2]+":")
                 with st.container(key="carry_creation_container", border=True):
@@ -90,15 +90,15 @@ def dispCharCreation():
             with col4:
                 st.write(secondaryStatList[3]+":")
                 rollString = lu.statifyString(st.session_state.class_table["CreditsRoll"])
-                st.text_input(secondaryStatList[3]+":", key = "t_char_creds", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_creds","err_text_secondary_stat"), kwargs={"roll": rollString}, disabled=st.session_state.select_disable_secondary_stat)
+                st.text_input(secondaryStatList[3]+":", key = "t_char_creds", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_creds","err_text_secondary_stat"), kwargs={"roll": rollString})
             with col5:
                 st.write(secondaryStatList[4]+":")
                 rollString = lu.statifyString(st.session_state.class_table["DebtRoll"])
-                st.text_input(secondaryStatList[4]+":", key = "t_char_debt", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_debt","err_text_secondary_stat"), kwargs={"roll": rollString}, disabled=st.session_state.select_disable_secondary_stat)
+                st.text_input(secondaryStatList[4]+":", key = "t_char_debt", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_debt","err_text_secondary_stat"), kwargs={"roll": rollString})
             with col6:
-                st.button('Random', key = "sec_stat_random", on_click = lc.randomSecondaryStats, disabled=st.session_state.select_disable_secondary_stat)
+                st.button('Random', key = "sec_stat_random", on_click = lc.randomSecondaryStats)
             with col7:
-                st.button('Finalize', key = "sec_stat_finalize", on_click = lsc.finalizeSecondaryStats, disabled=st.session_state.select_disable_secondary_stat)
+                st.button('Finalize', key = "sec_stat_finalize", on_click = lsc.finalizeSecondaryStats)
             if st.session_state.err_text_secondary_stat:
                 st.error(lu.errTextDB["err_text_secondary_stat"])
         else:
@@ -113,42 +113,42 @@ def dispCharCreation():
     #ROW 4 - DESCRIPTION
     if st.session_state.stage >= 4:
         descFieldList = lu.fieldTableDB["DescTable"]
-        if not st.session_state.select_disable_desc:
+        if st.session_state.stage==4:
             st.header("Description")
             col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
             with col1:
                 st.write(descFieldList[0]+":")
-                st.text_input(descFieldList[0]+":", key = "t_char_name", label_visibility="collapsed", on_change=lu.resetErrField, args=("err_text_desc"), disabled=st.session_state.select_disable_desc)
+                st.text_input(descFieldList[0]+":", key = "t_char_name", label_visibility="collapsed", on_change=lu.resetErrField, args=("err_text_desc"))
             with col2:
                 st.write(descFieldList[1]+":")
-                st.text_input(descFieldList[1]+":", key = "t_char_feature", label_visibility="collapsed", disabled=st.session_state.select_disable_desc)
+                st.text_input(descFieldList[1]+":", key = "t_char_feature", label_visibility="collapsed")
             with col3:
                 st.write(descFieldList[2]+":")
-                st.text_input(descFieldList[2]+":", key = "t_char_quirk", label_visibility="collapsed", disabled=st.session_state.select_disable_desc)
+                st.text_input(descFieldList[2]+":", key = "t_char_quirk", label_visibility="collapsed")
             col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
             with col1:
                 st.write(descFieldList[3]+":")
-                st.text_input(descFieldList[3]+":", key = "t_char_style", label_visibility="collapsed", disabled=st.session_state.select_disable_desc)
+                st.text_input(descFieldList[3]+":", key = "t_char_style", label_visibility="collapsed")
             with col2:
                 st.write(descFieldList[4]+":")
-                st.text_input(descFieldList[4]+":", key = "t_char_obsession", label_visibility="collapsed", disabled=st.session_state.select_disable_desc)
+                st.text_input(descFieldList[4]+":", key = "t_char_obsession", label_visibility="collapsed")
             with col3:
                 st.write(descFieldList[5]+":")
-                st.text_input(descFieldList[5]+":", key = "t_char_desire", label_visibility="collapsed", disabled=st.session_state.select_disable_desc)
+                st.text_input(descFieldList[5]+":", key = "t_char_desire", label_visibility="collapsed")
             st.write(descFieldList[6]+":")
-            st.text_input(descFieldList[6]+":", key = "t_char_lender", label_visibility="collapsed", disabled=st.session_state.select_disable_desc)
+            st.text_input(descFieldList[6]+":", key = "t_char_lender", label_visibility="collapsed")
             if "RandomClassLore" in st.session_state.class_table.keys():
                 st.write(st.session_state.class_table["RandomClassLorePrompt"]+":")
-                st.text_area(st.session_state.class_table["RandomClassLorePrompt"]+":", key = "t_char_class_lore", label_visibility="collapsed", disabled=st.session_state.select_disable_desc)
+                st.text_area(st.session_state.class_table["RandomClassLorePrompt"]+":", key = "t_char_class_lore", label_visibility="collapsed")
             col1, col2, col3, col4, col5 = st.columns([1,1,1,1,1],vertical_alignment="bottom")
             with col1:
                 pass
             with col2:
-                st.button('Random', key = "desc_random", on_click = lc.randomDesc, disabled=st.session_state.select_disable_desc, use_container_width=True)
+                st.button('Random', key = "desc_random", on_click = lc.randomDesc, use_container_width=True)
             with col3:
                 pass
             with col4:
-                st.button('Finalize', key = "desc_finalize", on_click = lsc.finalizeDesc, disabled=st.session_state.select_disable_desc, use_container_width=True)
+                st.button('Finalize', key = "desc_finalize", on_click = lsc.finalizeDesc, use_container_width=True)
             with col5:
                 pass
             if st.session_state.err_text_desc:
@@ -168,23 +168,12 @@ def dispCharCreation():
             
     #ROW 5 - STUFF
     if st.session_state.stage >= 5:
-        if not st.session_state.select_disable_stuff:
-            if "RandomClassStuff" in st.session_state.class_table.keys():
-                st.header(st.session_state.class_table["RandomClassStuffText"] + ":")
-                lc.insertStuffEntry(lcd.StuffField("RandomItem", None, {}), "RandomClassStuff", customStuffTable = st.session_state.class_table["RandomClassStuff"])
-                st.header("You also have:")
-            else:
-                st.header("You have:")
-            
-            stuffList = st.session_state.class_table["Stuff"]
-            if "ClassStuff" in st.session_state.class_table.keys():
-                stuffList = st.session_state.class_table["ClassStuff"] + stuffList
-            for stuffItem in stuffList:
-                lc.insertStuffEntry(stuffItem, stuffItem.p_source)
+        if st.session_state.stage==5:
+            lc.writeStuffSelection()
             col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
             with col1:
                 pass
             with col2:
-                st.button('Finalize', key = "stuff_finalize", on_click = lsc.finalizeStuff, use_container_width=True, disabled=st.session_state.select_disable_stuff)
+                st.button('Finalize', key = "stuff_finalize", on_click = lsc.finalizeStuff, use_container_width=True)
             with col3:
                 pass

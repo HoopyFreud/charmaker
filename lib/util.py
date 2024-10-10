@@ -29,31 +29,30 @@ def rollMin(diceStr, floor = None):
     return roll
 
 #callback function for input changes to reset error unconditionally
-def resetErrField(errField):
-    st.write("Resetting field: "+errField)
-    st.session_state[errField] = False
+def resetErrField(errKey):
+    st.session_state[errKey] = False
     
 #callback function for input changes to make sure they're numbers in a valid range - return values are also used in page initialization
-def changeNumInput(key,errField,roll = None, override = False):
+def changeNumInput(key,errKey,roll = None, override = False):
     try:
         val = st.session_state[key]
         if val:
             val = int(val)
-            st.session_state[errField] = (False or override)
+            st.session_state[errKey] = (False or override)
             if roll:
                 if val > rollMax(roll) or val < rollMin(roll):
-                    st.session_state[errField] = True
+                    st.session_state[errKey] = True
         else:
-            st.session_state[errField] = (False or override)
+            st.session_state[errKey] = (False or override)
     except:
-        st.session_state[errField] = True
-    return st.session_state[errField]
+        st.session_state[errKey] = True
+    return st.session_state[errKey]
     
 #random selection for arbitrary and specific fields
-def randomSelector(key,selectList,errField = None):
+def randomSelector(key,selectList,errKey = None):
     st.session_state[key] = random.choice(selectList)
-    if errField:
-        resetErrField(errField)
+    if errKey:
+        resetErrField(errKey)
     
 #random selection for arbitrary and specific fields
 def randomSelectWordTable(table):
@@ -62,13 +61,13 @@ def randomSelectWordTable(table):
         randomEntry = randomSelectWordTable(randomEntry)
     return randomEntry
     
-def randomNumber(key,rollString,errField = None,lowerLimit = None):
+def randomNumber(key,rollString,errKey = None,lowerLimit = None):
     rollResult = roll(statifyString(rollString))
     if lowerLimit:
         rollResult = max(lowerLimit,rollResult)
     st.session_state[key] = str(rollResult)
-    if errField:
-        changeNumInput(key,errField,roll = rollString)
+    if errKey:
+        changeNumInput(key,errKey,roll = rollString)
 
 #process strings with special characters and replace them with stat values
 def statifyString(inString):
