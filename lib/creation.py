@@ -197,7 +197,6 @@ def processClassTable(classTable):
     if "Stuff" in classTable.keys():
         classTable["Stuff"] = [lu.processStuff(stuffEntry) for stuffEntry in classTable["Stuff"]]
     if "ClassStuff" in classTable.keys():
-        #we add a number to the source here to ensure that we will be able to set up unique IDs for these fields later. Stuff is already uniquely identified and RandomClassStuff is a single field, so neither of them need it.
         classTable["ClassStuff"] = [lu.processStuff(stuffEntry) for stuffIndex,stuffEntry in enumerate(classTable["ClassStuff"])]
     if "RandomClassStuff" in classTable.keys():
         classTable["RandomClassStuff"] = {k: lu.processStuff(v) for k,v in classTable["RandomClassStuff"].items()}
@@ -229,9 +228,6 @@ def writeStuffSelection():
         insertStuffEntry(stuffItem, entryID)
 
 #Insert a stuff entry into the character builder UI
-#the prefix we pass into the sub-builders is just the prefix we get
-#at top level this will be the name of the character sheet *field* we are filling out
-#ie gear3, or ClassStuff.1
 def insertStuffEntry(stuff, entryID, customStuffTable = None):
     errKey = getErrKey(entryID)
     if errKey not in st.session_state:
@@ -303,9 +299,6 @@ def writeDamage(damageField):
 #write unknown fields - stuff like mags and number of uses and undetermined bonuses
 def writeUnknownFields(stuff, entryID):
     #need this to check for errors in multiple subfields on page load
-    #session state key is built from the parent element's viewstate key, plus the name of the *object* that the field belongs to, plus the name of the field
-    #note that part 2 is omitted if it does not exist
-    #this means that if we change the name of the object (by selecting a new one) the error state should not persist
     errKey = getErrKey(entryID)
     errCheck = st.session_state[errKey]
     for propID, prop in enumerate(stuff.p_data["Unknown"]):
