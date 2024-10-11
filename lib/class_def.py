@@ -1,24 +1,84 @@
+from dataclasses import field
+from marshmallow_dataclass import dataclass
+from typing import Union,Any
+import marshmallow
+import marshmallow_dataclass
 import copy
+import streamlit as st
 
+def serializeSuff(value):
+    if value is None:
+        return None
+    return {type(value).__name__:value.Schema().dump(value)}
+    
+def deserializeSuff(value):
+    (classID, data), = value.items()
+    match classID:
+        case "Stuff":
+            return Stuff.Schema().load(data)
+        case "App":
+            return App.Schema().load(data)
+        case "Feature":
+            return Feature.Schema().load(data)
+        case "Item":
+            return Item.Schema().load(data)
+        case "Armor":
+            return Armor.Schema().load(data)
+        case "Cyberdeck":
+            return Cyberdeck.Schema().load(data)
+        case "Cyberware":
+            return Cyberware.Schema().load(data)
+        case "Weapon":
+            return Weapon.Schema().load(data)
+        case "Nano":
+            return Nano.Schema().load(data)
+        case "Infestation":
+            return Infestation.Schema().load(data)
+        case "Unit":
+            return Unit.Schema().load(data)
+        case "Vehicle":
+            return Vehicle.Schema().load(data)
+        case _:
+            return None
+
+class AnyStuffField(marshmallow.fields.Field):
+    def _serialize(self, value, attr, obj, **kwargs):
+        if isinstance(value,list):
+            return [serializeSuff(subValue) for subValue in value]
+        else:
+            return serializeSuff(value)
+    def _deserialize(self, value, attr, obj, **kwargs):
+        if isinstance(value,list):
+            return [deserializeSuff(subValue) for subValue in value]
+        else:
+            return deserializeSuff(value)
+        
+class AnyStuffType():
+    pass
+
+class BaseSchema(marshmallow.Schema):
+    TYPE_MAPPING = {AnyStuffType: AnyStuffField}
+
+@dataclass(base_schema=BaseSchema)
 class PC():
-    pc_name = None
-    pc_desc = None
-    pc_class = None
-    pc_agi = None
-    pc_knw = None
-    pc_pre = None
-    pc_str = None
-    pc_tou = None
-    pc_hp_max = None
-    pc_hp_current = None
-    pc_carrying_max = None
-    pc_carrying_current = None
-    pc_glitch_current = None
-    pc_glitch_roll = None
-    pc_creds = None
-    pc_debt = None
-    pc_debt_lender = None
-    pc_stuff = []
+    pc_name:str = None
+    pc_desc:str = None
+    pc_class:str = None
+    pc_agi:int = None
+    pc_knw:int = None
+    pc_pre:int = None
+    pc_str:int = None
+    pc_tou:int = None
+    pc_hp_max:int = None
+    pc_hp_current:int = None
+    pc_carrying_max:int = None
+    pc_carrying_current:int = None
+    pc_glitch_current:int = None
+    pc_glitch_roll:str = None
+    pc_creds:int = None
+    pc_debt:int = None
+    pc_debt_lender:str = None
+    pc_stuff:AnyStuffType = field(default_factory=list)
     
     def flatStuffList(self):
         return self.recursiveListFlatten(copy.deepcopy(self.pc_stuff))
@@ -34,86 +94,83 @@ class PC():
     def getCurrentCarry(self):
         return 5
     
+@dataclass(base_schema=BaseSchema)
 class DamageField():
-    p_damage = None
-    p_desc = None
-    p_firemode = None
-    p_mech_bonus = False
+    p_damage:str = None
+    p_desc:str = None
+    p_firemode:Union[list[str],str] = None
+    p_mech_bonus:bool = False
     
+@dataclass(base_schema=BaseSchema)
 class PropChangeField():
-    p_property = None
-    p_value = None
-    p_dispName = None
+    p_property:str = None
+    p_value:Union[int,str] = None
+    p_dispName:str = None
     
-    def __init__(self, p_property, p_value, p_dispName):
-        self.p_property = p_property
-        self.p_value = p_value
-        self.p_dispName = p_dispName
-    
+@dataclass(base_schema=BaseSchema)
 class Stuff():
-    p_name = None
-    p_desc = None
-    p_sub_stuff = None
+    p_name:str = None
+    p_desc:str = None
+    p_sub_stuff:AnyStuffType = None
     
+@dataclass(base_schema=BaseSchema)
+class App(Stuff):
+    p_damage:DamageField = None
+    
+@dataclass(base_schema=BaseSchema)
 class Feature():
-    p_feature_text = None
-    p_pc_desc_text = None
+    p_feature_text:str = None
+    p_pc_desc_text:str = None
     
+@dataclass(base_schema=BaseSchema)    
+class Item(Stuff):
+    p_uses:int = None
+    p_equipped:bool = True
+    
+@dataclass(base_schema=BaseSchema)
+class Armor(Item):
+    p_armor:str = None
+    
+@dataclass(base_schema=BaseSchema)
+class Cyberdeck(Item):
+    p_slot_max:int = None
+    p_slots:list[App] = field(default_factory=list)
+    
+@dataclass(base_schema=BaseSchema)
+class Cyberware(Item):
+    p_pc_desc_text:str = None
+    p_prop_change:list[PropChangeField] = field(default_factory=list)
+    
+@dataclass(base_schema=BaseSchema)
+class Weapon(Item):
+    p_mags:int = None
+    p_damage:DamageField = None
+    
+@dataclass(base_schema=BaseSchema)
 class Nano(Stuff):
     pass
 
+@dataclass(base_schema=BaseSchema)
 class Infestation(Stuff):
-    p_pc_desc_text = None
-    p_prop_change = []
-    
-class App(Stuff):
-    p_damage = None
+    p_pc_desc_text:str = None
+    p_prop_change:list[PropChangeField] = field(default_factory=list)
 
+@dataclass(base_schema=BaseSchema)
 class Unit(Stuff):
-    p_damage = None
-    p_armor = None
-    p_hp_max = None
-    p_hp_current = None
+    p_damage:DamageField = None
+    p_armor:str = None
+    p_hp_max:int = None
+    p_hp_current:int = None
 
+@dataclass(base_schema=BaseSchema)
 class Vehicle(Unit):
     pass
 
-class Item(Stuff):
-    p_uses = None
-    p_equipped = True
-    
-class Armor(Item):
-    p_armor = None
-    
-class Cyberdeck(Item):
-    p_slot_max = None
-    p_slots = None
-    
-class Cyberware(Item):
-    p_pc_desc_text = None
-    p_prop_change = []
-    
-class Weapon(Item):
-    p_mags = None
-    p_damage = None
-    
+@dataclass(base_schema=BaseSchema)
 class StuffField:
-    p_type = None
-    p_name = None
-    p_data = None
-    
-    def __init__(self, p_type, p_name, p_data):
-        self.p_type = p_type
-        self.p_name = p_name
-        self.p_data = p_data
-        
-    def __eq__(self, other):
-        if self and other:
-            return [self.p_type, self.p_name, self.p_data] == [other.p_type, other.p_name, other.p_data]
-        return False
-        
-    def as_dict(self):
-        return {"Type":self.p_type, "Name":self.p_name, "Data":self.p_data}
+    p_type:str = None
+    p_name:str = None
+    p_data:dict[str, Any] = None
 
 def getEmptyRandomItem():
     return StuffField("RandomItem", None, {})

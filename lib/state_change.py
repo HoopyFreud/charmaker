@@ -3,6 +3,7 @@ import lib.creation as lc
 import lib.sheet as ls
 import lib.class_def as lcd
 import streamlit as st
+import json
 
 def charReset():
     for key in st.session_state.keys():
@@ -16,7 +17,8 @@ def charReset():
     
 def processCharUpload():
     if st.session_state.file_uploader_value:
-        st.session_state.PC = ls.loadFromYaml(st.session_state.file_uploader_value)
+        charObject = json.load(st.session_state.file_uploader_value)
+        st.session_state.PC = lcd.PC.Schema().load(charObject)
         setStageView()
     
 def finalizeClass():

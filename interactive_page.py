@@ -9,7 +9,7 @@ lsup.appSetupKeys()
 lsup.appUpdatePC()
 lsup.appCSS()
     
-char_export_yaml = ls.saveToYaml()
+char_export_yaml = ls.saveToJson()
 
 col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
 with col1:

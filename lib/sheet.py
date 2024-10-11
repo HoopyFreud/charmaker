@@ -3,7 +3,7 @@ import streamlit as st
 import yaml
 
 def clearCharCache(cacheType = "All"):
-    saveToYaml.clear()
+    saveToJson.clear()
     if cacheType == "All" or cacheType == "Stuff" or "Stuff" in cacheType:
         getFlatStuffList.clear()
     
@@ -11,9 +11,9 @@ def loadFromYaml(yamlIO):
     return yaml.load(yamlIO, Loader=yaml.Loader)
     
 @st.cache_data
-def saveToYaml():
+def saveToJson():
     if "PC" in st.session_state:
-        return yaml.dump(st.session_state.PC)
+        return lcd.PC.Schema().dumps(st.session_state.PC)
     return None
     
 @st.cache_resource
@@ -28,7 +28,7 @@ def updateChar(cacheType = "All"):
     st.session_state.PC.pc_creds = st.session_state.c_pc_creds
     st.session_state.PC.pc_debt = st.session_state.c_pc_debt
     st.session_state.PC.pc_desc = st.session_state.c_pc_desc
-    saveToYaml.clear(cacheType = cacheType)
+    saveToJson.clear(cacheType = cacheType)
 
 def displayStuffDesc():
     featureStrings = []
