@@ -86,7 +86,7 @@ def dispCharCreation():
             with col3:
                 st.write(secondaryStatList[2]+":")
                 with st.container(key="carry_creation_container", border=True):
-                    st.write(lu.statifyString(st.session_state.class_table["CarryingCapacityRoll"]))
+                    st.write(lu.repCarryCap(st.session_state.class_table["CarryingCapacityStrings"]))
             with col4:
                 st.write(secondaryStatList[3]+":")
                 rollString = lu.statifyString(st.session_state.class_table["CreditsRoll"])
@@ -105,7 +105,7 @@ def dispCharCreation():
             headerString = ""
             headerString = headerString + '<div>' + secondaryStatList[0]+": " + str(st.session_state.PC.pc_hp_max) + '</div>'
             headerString = headerString + '<div>' + secondaryStatList[1]+": " + str(st.session_state.PC.pc_glitch_current) + '</div>'
-            headerString = headerString + '<div>' + secondaryStatList[2]+": " + str(st.session_state.PC.pc_carrying_max) + '</div>'
+            headerString = headerString + '<div>' + secondaryStatList[2]+": " + lu.repCarryCap(st.session_state.PC.pc_carry_max) + '</div>'
             headerString = headerString + '<div>' + secondaryStatList[3]+": " + str(st.session_state.PC.pc_creds) + '</div>'
             headerString = headerString + '<div>' + secondaryStatList[4]+": " + str(st.session_state.PC.pc_debt) + '</div>'
             st.markdown('<div class="char_stat_block">'+headerString+'</div>',unsafe_allow_html=True)

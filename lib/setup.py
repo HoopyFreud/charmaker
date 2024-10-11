@@ -1,10 +1,8 @@
 import lib.creation as lc
 import lib.class_def as lcd
-import lib.sheet as ls
 import streamlit as st
 
 def appSetupKeys():
-    
     if "stage" not in st.session_state:
         st.session_state.stage = 0
         
@@ -23,7 +21,8 @@ def appSetupKeys():
         
     if "PC" not in st.session_state:
         st.session_state.PC = lcd.PC()
-        ls.clearCharCache()
+    if "SheetAttributes" not in st.session_state:
+        st.session_state.SheetAttributes = lcd.SheetAttributes()
     if "class_table" not in st.session_state:
         st.session_state.class_table = lc.processClassTable(lc.getClassObject(None))
         
@@ -48,6 +47,21 @@ def appSetupKeys():
     if "t_char_debt" not in st.session_state:
         st.session_state.t_char_debt = None
         
+    if "c_pc_hp_current" not in st.session_state:
+        st.session_state.c_pc_hp_current = None
+    if "c_pc_hp_max" not in st.session_state:
+        st.session_state.c_pc_hp_max = None
+    if "c_pc_glitch_current" not in st.session_state:
+        st.session_state.c_pc_glitch_current = None
+    if "c_pc_creds" not in st.session_state:
+        st.session_state.c_pc_creds = None
+    if "c_pc_debt" not in st.session_state:
+        st.session_state.c_pc_debt = None
+    if "c_pc_desc" not in st.session_state:
+        st.session_state.c_pc_desc = None
+    if "c_pc_equipped_armor" not in st.session_state:
+        st.session_state.c_pc_equipped_armor = None
+        
     if "err_text_class" not in st.session_state:
         st.session_state.err_text_class = False
     if "err_text_stat" not in st.session_state:
@@ -56,16 +70,6 @@ def appSetupKeys():
         st.session_state.err_text_secondary_stat = False
     if "err_text_desc" not in st.session_state:
         st.session_state.err_text_desc = False
-        
-def appUpdatePC():
-    st.session_state.c_pc_hp_current = st.session_state.PC.pc_hp_current
-    st.session_state.c_pc_hp_max = st.session_state.PC.pc_hp_max
-    st.session_state.c_pc_glitch_current = st.session_state.PC.pc_glitch_current
-    st.session_state.c_pc_carrying_max = st.session_state.PC.pc_carrying_max
-    st.session_state.c_pc_creds = st.session_state.PC.pc_creds
-    st.session_state.c_pc_debt = st.session_state.PC.pc_debt
-    st.session_state.c_pc_desc = st.session_state.PC.pc_desc
-    st.session_state.c_pc_flat_stuff_list = ls.getFlatStuffList()
     
 def appCSS():
     primaryColor = st.get_option("theme.textColor")
@@ -91,3 +95,20 @@ def appCSS():
     """,
     unsafe_allow_html=True,
     )
+    
+def appUpdatePCStateKeys(fieldType = "All"):
+    if fieldType == "All" or fieldType == "hp_current":
+        st.session_state.c_pc_hp_current = st.session_state.PC.pc_hp_current
+    if fieldType == "All" or fieldType == "hp_max":
+        st.session_state.c_pc_hp_max = st.session_state.PC.pc_hp_max
+    if fieldType == "All" or fieldType == "glitch_current":
+        st.session_state.c_pc_glitch_current = st.session_state.PC.pc_glitch_current
+    if fieldType == "All" or fieldType == "creds":
+        st.session_state.c_pc_creds = st.session_state.PC.pc_creds
+    if fieldType == "All" or fieldType == "debt":
+        st.session_state.c_pc_debt = st.session_state.PC.pc_debt
+    if fieldType == "All" or fieldType == "equipped_armor":
+        st.session_state.c_pc_equipped_armor = st.session_state.PC.pc_equipped_armor
+    if fieldType == "All" or fieldType == "desc":
+        if st.session_state.stage != -2:
+            st.session_state.c_pc_desc = st.session_state.PC.pc_desc

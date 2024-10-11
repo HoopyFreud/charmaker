@@ -1,7 +1,6 @@
 import lib.util as lu
 import lib.class_def as lcd
 import streamlit as st
-import numexpr as ne
 import json
 
 #calculate the mod value for a given stat roll
@@ -59,7 +58,7 @@ def burnPCSecondaryStats():
         st.session_state.PC.pc_hp_max = max(1,st.session_state.PC.pc_hp_max)
         st.session_state.PC.pc_hp_current = st.session_state.PC.pc_hp_max
         st.session_state.PC.pc_glitch_roll = lu.statifyString(st.session_state.class_table["GlitchRoll"])
-        st.session_state.PC.pc_carrying_max = ne.evaluate(lu.statifyString(st.session_state.class_table["CarryingCapacityRoll"])).item()
+        st.session_state.PC.pc_carry_max = st.session_state.class_table["CarryingCapacityStrings"]
         return True
     except:
         return False
@@ -111,6 +110,10 @@ def burnPCStuff():
         stuffList = st.session_state.class_table["ClassStuff"] + stuffList
     for stuffNumber,stuffItem in enumerate(stuffList, start=enumStart):
         appendOrExtendStuffList(getStuffFromField(stuffItem,str(stuffNumber)))
+    st.session_state.PC.pc_equipped_armor = next(filter(lambda item: isinstance(item,lcd.Armor), st.session_state.PC.pc_stuff), None)
+    noArmorObj = lu.generateObjectFromStuffField(lu.stuffDB["armor_no_armor"])
+    if noArmorObj not in st.session_state.PC.pc_stuff:
+        appendOrExtendStuffList(noArmorObj)
     if None in st.session_state.PC.pc_stuff:
         return False
     return True
@@ -171,7 +174,7 @@ def getUnknownFieldValues(stuffObj,unknownPropList,entryID):
             return False
         if prop["Entry"] != "Dropdown":
             try:
-                fieldValue = ne.evaluate(lu.statifyString(fieldValue)).item()
+                fieldValue = lu.evaluate(lu.statifyString(fieldValue)).item()
             except:
                 st.session_state[errKey] = True
                 return False

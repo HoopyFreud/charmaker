@@ -179,7 +179,8 @@
     {
         "Armor":
         {
-            "Name": "No armor"
+            "Name": "No armor",
+            "Equipped": null
         }
     },
     "armor_styleguard":
@@ -880,7 +881,8 @@
         "Item":
         {
             "Name": "Backpack",
-            "Description": "Holds 7 normal-sized items."
+            "Description": "Holds 7 normal-sized items.",
+            "Equipped": null
         }
     },
     "item_bio_scanner":
@@ -903,7 +905,8 @@
     {
         "Item":
         {
-            "Name": "Clothes"
+            "Name": "Clothes",
+            "Equipped": null
         }
     },
     "item_crime_kit":
@@ -943,7 +946,8 @@
         "Item":
         {
             "Name": "Fake ID",
-            "Description": "Passes random checks, not active searches."
+            "Description": "Passes random checks, not active searches.",
+            "Equipped": null
         }
     },
     "item_first_aid":
@@ -1057,7 +1061,8 @@
         "Item":
         {
             "Name": "Retinal Com Device (RCD)",
-            "Description": "Beams holodata straight into your skull. Access sites, send/receive texts, pics, video feeds. Interface with technology."
+            "Description": "Beams holodata straight into your skull. Access sites, send/receive texts, pics, video feeds. Interface with technology.",
+            "Equipped": null
         }
     },
     "item_scum_explosive":
@@ -1101,7 +1106,8 @@
         "Item":
         {
             "Name": "CWPC Metro card",
-            "Uses": 1
+            "Uses": 1,
+            "Equipped": null
         }
     },
     "item_visionvisor":

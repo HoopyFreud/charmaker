@@ -6,7 +6,8 @@
             "Item":
             {
                 "Name": "Mirrorshades",
-                "DescText": "You wear mirrorshades all the time."
+                "DescText": "You wear mirrorshades all the time.",
+                "Equipped": null
             }
         },
         "2":
@@ -29,7 +30,8 @@
             "Item":
             {
                 "Name": "Hangover",
-                "DescText": "You have a hangover."
+                "DescText": "You have a hangover.",
+                "Equipped": null
             }
         },
         "4":

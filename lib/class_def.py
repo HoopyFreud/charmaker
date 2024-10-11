@@ -22,12 +22,16 @@ def deserializeSuff(value):
             return Feature.Schema().load(data)
         case "Item":
             return Item.Schema().load(data)
+        case "Ammo":
+            return Ammo.Schema().load(data)
         case "Armor":
             return Armor.Schema().load(data)
         case "Cyberdeck":
             return Cyberdeck.Schema().load(data)
         case "Cyberware":
             return Cyberware.Schema().load(data)
+        case "Drug":
+            return Drug.Schema().load(data)
         case "Weapon":
             return Weapon.Schema().load(data)
         case "Nano":
@@ -52,12 +56,20 @@ class AnyStuffField(marshmallow.fields.Field):
             return [deserializeSuff(subValue) for subValue in value]
         else:
             return deserializeSuff(value)
+
+class BoolOrNoneField(marshmallow.fields.Field):
+    def __init__(self, *args, **kwargs):
+        kwargs['allow_none'] = True
+        super().__init__(*args, **kwargs)
         
 class AnyStuffType():
     pass
+        
+class BoolOrNoneType():
+    pass
 
 class BaseSchema(marshmallow.Schema):
-    TYPE_MAPPING = {AnyStuffType: AnyStuffField}
+    TYPE_MAPPING = {AnyStuffType: AnyStuffField, BoolOrNoneType: BoolOrNoneField}
 
 @dataclass(base_schema=BaseSchema)
 class PC():
@@ -71,14 +83,13 @@ class PC():
     pc_tou:int = None
     pc_hp_max:int = None
     pc_hp_current:int = None
-    pc_carrying_max:int = None
-    pc_carrying_current:int = None
+    pc_carry_max:list[str] = field(default_factory=list)
     pc_glitch_current:int = None
     pc_glitch_roll:str = None
     pc_creds:int = None
     pc_debt:int = None
-    pc_debt_lender:str = None
     pc_stuff:AnyStuffType = field(default_factory=list)
+    pc_equipped_armor:AnyStuffType = field(default_factory=list)
     
     def flatStuffList(self):
         return self.recursiveListFlatten(copy.deepcopy(self.pc_stuff))
@@ -90,9 +101,6 @@ class PC():
                     if item.p_sub_stuff is not None:
                         inList.append(self.recursiveListFlatten(item.p_sub_stuff))
         return inList
-        
-    def getCurrentCarry(self):
-        return 5
     
 @dataclass(base_schema=BaseSchema)
 class DamageField():
@@ -112,10 +120,23 @@ class Stuff():
     p_name:str = None
     p_desc:str = None
     p_sub_stuff:AnyStuffType = None
+    p_prop_change:PropChangeField = None
     
 @dataclass(base_schema=BaseSchema)
 class App(Stuff):
     p_damage:DamageField = None
+    
+@dataclass(base_schema=BaseSchema)
+class Cyberware(Stuff):
+    p_pc_desc_text:str = None
+    
+@dataclass(base_schema=BaseSchema)
+class Nano(Stuff):
+    pass
+
+@dataclass(base_schema=BaseSchema)
+class Infestation(Stuff):
+    p_pc_desc_text:str = None
     
 @dataclass(base_schema=BaseSchema)
 class Feature():
@@ -125,7 +146,11 @@ class Feature():
 @dataclass(base_schema=BaseSchema)    
 class Item(Stuff):
     p_uses:int = None
-    p_equipped:bool = True
+    p_equipped:BoolOrNoneType = True
+    
+@dataclass(base_schema=BaseSchema)    
+class Ammo(Stuff):
+    p_equipped:BoolOrNoneType = None
     
 @dataclass(base_schema=BaseSchema)
 class Armor(Item):
@@ -136,25 +161,15 @@ class Cyberdeck(Item):
     p_slot_max:int = None
     p_slots:list[App] = field(default_factory=list)
     
-@dataclass(base_schema=BaseSchema)
-class Cyberware(Item):
-    p_pc_desc_text:str = None
-    p_prop_change:list[PropChangeField] = field(default_factory=list)
+@dataclass(base_schema=BaseSchema)    
+class Drug(Stuff):
+    p_equipped:BoolOrNoneType = None
     
 @dataclass(base_schema=BaseSchema)
 class Weapon(Item):
     p_mags:int = None
     p_damage:DamageField = None
     
-@dataclass(base_schema=BaseSchema)
-class Nano(Stuff):
-    pass
-
-@dataclass(base_schema=BaseSchema)
-class Infestation(Stuff):
-    p_pc_desc_text:str = None
-    p_prop_change:list[PropChangeField] = field(default_factory=list)
-
 @dataclass(base_schema=BaseSchema)
 class Unit(Stuff):
     p_damage:DamageField = None
@@ -171,6 +186,76 @@ class StuffField:
     p_type:str = None
     p_name:str = None
     p_data:dict[str, Any] = None
+
+@dataclass(base_schema=BaseSchema)
+class SheetAttributes():
+    stuff:AnyStuffType = field(default_factory=list)
+    flatStuffList:AnyStuffType = field(default_factory=list)
+    appList:AnyStuffType = field(default_factory=list)
+    armorList:AnyStuffType = field(default_factory=list)
+    cyberwareList:AnyStuffType = field(default_factory=list)
+    itemList:AnyStuffType = field(default_factory=list)
+    nanoInfestationList:AnyStuffType = field(default_factory=list)
+    unitList:AnyStuffType = field(default_factory=list)
+    weaponList:AnyStuffType = field(default_factory=list)
+    currentCarry:int = 0
+
+    def __post_init__(self):
+        self.updateStuff(self.stuff)
+            
+    def updateStuff(self,stuffList):
+        self.stuff = copy.deepcopy(stuffList)
+        self.callAllUpdates()
+        
+    def callAllUpdates(self):
+        self.updateFlatStuffList()
+        self.updateAppList()
+        self.updateArmorList()
+        self.updateCyberwareList()
+        self.updateItemList()
+        self.updateNanoInfestationList()
+        self.updateUnitList()
+        self.updateWeaponList()
+        self.updateCurrentCarry()
+            
+    def updateAppList(self):
+        self.appList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,App)]
+            
+    def updateArmorList(self):
+        self.armorList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Armor)]
+            
+    def updateCyberwareList(self):
+        self.cyberwareList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Cyberware)]
+            
+    def updateItemList(self):
+        self.itemList = [stuffItem for stuffItem in self.stuff if issubclass(type(stuffItem),Item) and not isinstance(stuffItem,Armor) and not isinstance(stuffItem,Weapon)]
+        self.itemList.sort(key = lambda item: str(type(item)))
+            
+    def updateNanoInfestationList(self):
+        self.nanoInfestationList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Nano) or isinstance(stuffItem,Infestation)]
+            
+    def updateUnitList(self):
+        self.unitList = [stuffItem for stuffItem in self.stuff if issubclass(type(stuffItem),Unit)]
+            
+    def updateWeaponList(self):
+        self.weaponList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Weapon)]
+        
+    def updateCurrentCarry(self):
+        self.currentCarry = sum(1 for item in self.stuff if issubclass(type(item),Item) and item.p_equipped)
+            
+    def updateFlatStuffList(self):
+        if self.stuff:
+            self.flatStuffList = []
+            self.recursiveListFlatten(self.stuff)
+            
+    def recursiveListFlatten(self,inList):
+        if isinstance(inList,list):
+            for item in inList:
+                if not isinstance(item,Feature):
+                    if item.p_sub_stuff is not None:
+                        self.recursiveListFlatten(item.p_sub_stuff)
+        else:
+            self.flatStuffList.append(inList)
 
 def getEmptyRandomItem():
     return StuffField("RandomItem", None, {})

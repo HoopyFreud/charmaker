@@ -1,4 +1,4 @@
-from lib.setup import appSetupKeys
+import lib.setup as lsup
 import lib.creation as lc
 import lib.sheet as ls
 import lib.class_def as lcd
@@ -8,18 +8,16 @@ import json
 def charReset():
     for key in st.session_state.keys():
         del st.session_state[key]
-    appSetupKeys()
+    lsup.appSetupKeys()
     st.session_state.stage = 1
-    st.session_state.PC = lcd.PC()
-    st.session_state.class_table = lc.processClassTable(lc.getClassObject(None))
-    st.session_state.class_feature = None
     ls.clearCharCache()
     
 def processCharUpload():
     if st.session_state.file_uploader_value:
         charObject = json.load(st.session_state.file_uploader_value)
         st.session_state.PC = lcd.PC.Schema().load(charObject)
-        setStageView()
+        st.session_state.SheetAttributes = lcd.SheetAttributes(stuff=st.session_state.PC.pc_stuff)
+        st.session_state.stage = -1
     
 def finalizeClass():
     valid_class = lc.burnPCClass()
@@ -54,15 +52,17 @@ def finalizeDesc():
 def finalizeStuff():
     valid_stuff = lc.burnPCStuff()
     if valid_stuff:
-        setStageView()
-        
-def setStageView():
-    st.session_state.stage = -1
-    ls.clearCharCache()
+        st.session_state.SheetAttributes = lcd.SheetAttributes(stuff=st.session_state.PC.pc_stuff)
+        ls.clearCharCache()
+        st.session_state.stage = -1
         
 def sheetEditDesc():
+    lsup.appUpdatePCStateKeys(fieldType = "desc")
     st.session_state.stage = -2
+    
+def sheetCancelDesc():
+    st.session_state.stage = -1
         
 def sheetSaveDesc():
-    ls.updateChar()
-    setStageView()
+    ls.updateChar(fieldType = "desc",cacheType=None)
+    st.session_state.stage = -1

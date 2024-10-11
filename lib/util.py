@@ -1,3 +1,4 @@
+from numexpr import evaluate
 import lib.class_def as lcd
 import streamlit as st
 import dice
@@ -100,6 +101,13 @@ def statifyString(inString):
                 inString = re.sub("("+shortStatTable[index]+")","-"+statValString,inString)
     return inString
 
+#callback function for input changes to reset error unconditionally
+def repCarryCap(carryList):
+    carryList = [statifyString(carryString) for carryString in carryList]
+    if evaluate:
+        carryList = [str(evaluate(carryString).item()) for carryString in carryList]
+    return " &nbsp;| &nbsp;".join(carryList)
+
 #turn JSON dictionaries into StuffField objects
 def processStuff(stuff):
     if not isinstance(stuff, lcd.StuffField):
@@ -128,7 +136,7 @@ def processStuff(stuff):
 def generateObjectFromStuffField(stuff):
     match stuff.p_type:
         case "Ammo":
-            stuffObj = lcd.Item()
+            stuffObj = lcd.Ammo()
         case "App":
             stuffObj = lcd.App()
         case "Armor":
@@ -138,7 +146,7 @@ def generateObjectFromStuffField(stuff):
         case "Cyberware":
             stuffObj = lcd.Cyberware()
         case "Drug":
-            stuffObj = lcd.Item()
+            stuffObj = lcd.Drug()
         case "Infestation":
             stuffObj = lcd.Infestation()
         case "Item":
@@ -171,6 +179,8 @@ def generateObjectFromStuffField(stuff):
         stuffObj.p_pc_desc_text = stuff.p_data["DescText"]
     if "DamageReduction" in stuff.p_data.keys():
         stuffObj.p_armor = stuff.p_data["DamageReduction"]
+    if "Equipped" in stuff.p_data.keys():
+        stuffObj.p_equipped = stuff.p_data["Equipped"]
     if "FeatureText" in stuff.p_data.keys():
         stuffObj.p_feature_text = stuff.p_data["FeatureText"]
     if "HP" in stuff.p_data.keys():
@@ -178,6 +188,8 @@ def generateObjectFromStuffField(stuff):
         stuffObj.p_hp_current = stuff.p_data["HP"]
     if "Mags" in stuff.p_data.keys():
         stuffObj.p_mags = stuff.p_data["Mags"]
+    if "Equipped" in stuff.p_data.keys():
+        stuffObj.p_equipped = stuff.p_data["Equipped"]
     if "PropChange" in stuff.p_data.keys():
         stuffObj.p_prop_change.append(lcd.PropChangeField(stuff.p_data["PropChange"]["Property"],stuff.p_data["PropChange"]["Value"],stuff.p_data["PropChange"]["DispName"]))
     if "Slots" in stuff.p_data.keys():
