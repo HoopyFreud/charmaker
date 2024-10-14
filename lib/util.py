@@ -191,7 +191,8 @@ def generateObjectFromStuffField(stuff):
     if "Equipped" in stuff.p_data.keys():
         stuffObj.p_equipped = stuff.p_data["Equipped"]
     if "PropChange" in stuff.p_data.keys():
-        stuffObj.p_prop_change.append(lcd.PropChangeField(stuff.p_data["PropChange"]["Property"],stuff.p_data["PropChange"]["Value"],stuff.p_data["PropChange"]["DispName"]))
+        pcData = stuff.p_data["PropChange"]
+        stuffObj.p_prop_change.append(lcd.PropChangeField(pcData["Property"],pcData["Value"],pcData["DispName"]))
     if "Slots" in stuff.p_data.keys():
         stuffObj.p_slot_max = stuff.p_data["Slots"]
     if "Uses" in stuff.p_data.keys():

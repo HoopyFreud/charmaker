@@ -8,7 +8,7 @@ def dispCharCreation():
     #ROW 1 - CLASS
     if st.session_state.stage >= 1:
         if st.session_state.stage==1:
-            st.header("Class:")
+            st.header("Class:", anchor=False)
             dropdownList = lu.fieldTableDB["ClassTable"]
             col1, col2, col3 = st.columns([10,2,2],vertical_alignment="bottom")
             with col1:
@@ -20,13 +20,13 @@ def dispCharCreation():
             if st.session_state.err_text_class:
                 st.error(lu.errTextDB["err_text_class"])
         else:
-            st.header("Class: " + st.session_state.PC.pc_class)
+            st.header("Class: " + st.session_state.PC.pc_class, anchor=False)
             
     #ROW 2 - STATS
     if st.session_state.stage >= 2:
         statList = lu.fieldTableDB["StatTable"]
         if st.session_state.stage==2:
-            st.header("Stats:")
+            st.header("Stats:", anchor=False)
             col1, col2, col3, col4, col5, col6, col7 = st.columns([1,1,1,1,1,1,1],vertical_alignment="bottom")
             with col1:
                 st.write(statList[0]+":")
@@ -55,7 +55,7 @@ def dispCharCreation():
             if st.session_state.err_text_stat:
                 st.error(lu.errTextDB["err_text_stat"])
         else:
-            st.header("Stat Modifiers:")
+            st.header("Stat Modifiers:", anchor=False)
             headerString = ""
             statString = "+"+str(st.session_state.PC.pc_agi) if st.session_state.PC.pc_agi > 0 else str(st.session_state.PC.pc_agi)
             headerString = headerString + '<div>' + statList[0]+": " + statString + '</div>'
@@ -71,7 +71,7 @@ def dispCharCreation():
             
     if st.session_state.stage >= 3:
     #ROW 3 - SECONDARY STATS
-        st.header("Derived Stats:")
+        st.header("Derived Stats:", anchor=False)
         secondaryStatList = lu.fieldTableDB["SecondaryStatTable"]
         if st.session_state.stage==3:
             col1, col2, col3, col4, col5, col6, col7 = st.columns([1,1,1,1,1,1,1],vertical_alignment="bottom")
@@ -114,7 +114,7 @@ def dispCharCreation():
     if st.session_state.stage >= 4:
         descFieldList = lu.fieldTableDB["DescTable"]
         if st.session_state.stage==4:
-            st.header("Description")
+            st.header("Description", anchor=False)
             col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
             with col1:
                 st.write(descFieldList[0]+":")
@@ -156,12 +156,12 @@ def dispCharCreation():
         else:
             col1, col2 = st.columns([1,2.5],vertical_alignment="top")
             with col1:
-                st.header(descFieldList[0] + ":")
+                st.header(descFieldList[0] + ":", anchor=False)
             with col2:
-                st.header(st.session_state.PC.pc_name)
+                st.header(st.session_state.PC.pc_name, anchor=False)
             col1, col2 = st.columns([1,2.5],vertical_alignment="top")
             with col1:
-                st.header("Description:")
+                st.header("Description:", anchor=False)
             with col2:
                 st.write(st.session_state.PC.pc_desc)
         

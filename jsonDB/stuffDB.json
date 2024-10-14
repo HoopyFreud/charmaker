@@ -273,7 +273,8 @@
                     {
                         "Damage": "1d6",
                         "FireMode": "melee"
-                    }
+                    },
+                    "Equipped": null
                 }
             }
         }
@@ -351,7 +352,8 @@
                         "Damage": "1d6",
                         "Description": "Deals damage each round automatically when grappling.",
                         "FireMode": "melee"
-                    }
+                    },
+                    "Equipped": null
                 }
             }
         }
@@ -389,7 +391,8 @@
                         "Damage": "1d6",
                         "Description": "Bite attack. 2-in-6 risk of a free attack against you when you use it.",
                         "FireMode": "melee"
-                    }
+                    },
+                    "Equipped": null
                 }
             }
         }
@@ -455,7 +458,8 @@
                     {
                         "Damage": "2d10",
                         "FireMode": "single"
-                    }
+                    },
+                    "Equipped": null
                 }
             }
         }
@@ -476,7 +480,8 @@
                     {
                         "Damage": "1d4",
                         "FireMode": "melee"
-                    }
+                    },
+                    "Equipped": null
                 }
             }
         }
@@ -498,7 +503,8 @@
                         "Damage": "1d6",
                         "Description": "Can hit up to d3 targets.",
                         "FireMode": "single"
-                    }
+                    },
+                    "Equipped": null
                 }
             }
         }
@@ -541,7 +547,8 @@
                     "Name": "Skinslot",
                     "Description": "Extra app slot for another deck.",
                     "Slots": 1
-                }
+                },
+                "Equipped": null
             }
         }
     },
@@ -1022,7 +1029,8 @@
         "Item":
         {
             "Name": "Noisemaker",
-            "Description": "Blocks remote communication and surveillance within 20m for d4 minutes, d3 uses."
+            "Description": "Blocks remote communication and surveillance within 20m for d4 minutes.",
+            "Uses": 3
         }
     },
     "item_optic_camo":
@@ -1045,7 +1053,8 @@
     {
         "Item":
         {
-            "Name": "Bottle of Pulverized Acid"
+            "Name": "Bottle of Pulverized Acid",
+            "Uses": 1
         }
     },
     "item_card_skimmer":
@@ -1070,7 +1079,8 @@
         "Item":
         {
             "Name": "Scum eplosive",
-            "Description": "Enough for a moderately reinforced door."
+            "Description": "Enough for a moderately reinforced door.",
+            "Uses": 1
         }
     },
     "item_silencer":
@@ -1084,21 +1094,24 @@
     {
         "Item":
         {
-            "Name": "Spray can/marker"
+            "Name": "Spray can/marker",
+            "Uses": 1
         }
     },
     "item_superglue":
     {
         "Item":
         {
-            "Name": "Superglue"
+            "Name": "Superglue",
+            "Uses": 1
         }
     },
     "item_superlube":
     {
         "Item":
         {
-            "Name": "Superlube"
+            "Name": "Superlube",
+            "Uses": 1
         }
     },
     "item_train_ticket":
@@ -1122,7 +1135,8 @@
     {
         "Item":
         {
-            "Name": "Zip ties"
+            "Name": "Zip ties",
+            "Uses": 1
         }
     },
     "nano_benevolent_suturedroids":
@@ -1491,7 +1505,8 @@
                 "Damage": "1d4",
                 "Description": "Two attacks per round.",
                 "FireMode": ["melee","throw"]
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_power_tool":
@@ -1543,7 +1558,8 @@
             {
                 "Damage": "1d6",
                 "FireMode": ["single","auto"]
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_revolver":
@@ -1555,7 +1571,8 @@
             {
                 "Damage": "1d6",
                 "FireMode": ["single","auto"]
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_smartgun":
@@ -1566,16 +1583,17 @@
             "Damage":
             [
                 {
-                    "Name": "Without a SmartJack",
+                    "Description": "Without a SmartJack",
                     "Damage": "1d6",
                     "FireMode": ["single","auto"]
                 },
                 {
-                    "Name": "With a SmartJack",
+                    "Description": "With a SmartJack",
                     "Damage": "1d10",
                     "FireMode": ["single","auto"]
                 }
-            ]
+            ],
+            "Mags": 1
         }
     },
     "weapon_smgs":
@@ -1587,7 +1605,8 @@
             {
                 "Damage": "1d6",
                 "FireMode": "auto"
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_assault_rifle":
@@ -1599,7 +1618,8 @@
             {
                 "Damage": "1d8",
                 "FireMode": ["single","auto"]
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_assault_rifle_grenade":
@@ -1610,18 +1630,18 @@
             "Damage":
             [
                 {
-                    "Name": "Normal fire",
+                    "Description": "Normal fire",
                     "Damage": "1d8",
                     "FireMode": ["single","auto"]
                 },
                 {
-                    "Name": "Grenade launcher",
+                    "Description": "Grenade launcher - can hit up to d3 targets (uses grenades as ammo)",
                     "Damage": "1d6",
-                    "Description": "Can hit up to d3 targets.",
                     "FireMode": "single",
                     "MechDamage": true
                 }
-            ]
+            ],
+            "Mags": 1
         }
     },
     "weapon_shotgun":
@@ -1633,7 +1653,8 @@
             {
                 "Damage": "1d8",
                 "FireMode": "single"
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_sniper_rifle":
@@ -1646,7 +1667,8 @@
                 "Damage": "1d12",
                 "Description": "x3 damage on crit. -4DR, +3 damage when aiming for 2 rounds.",
                 "FireMode": "single"
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_pulse_rifle":
@@ -1659,7 +1681,8 @@
                 "Damage": "1d10",
                 "FireMode": ["single","auto"],
                 "MechDamage": true
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_nailgun":
@@ -1671,7 +1694,8 @@
             {
                 "Damage": "1d6",
                 "FireMode": "auto"
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_laser_turret":
@@ -1684,7 +1708,8 @@
                 "Damage": "1d12",
                 "FireMode": ["single","auto","remote"],
                 "MechDamage": true
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_rocket_launcher":
@@ -1698,7 +1723,8 @@
                 "Description": "Can hit up to d4 targets. Ignores 2 points of armor. Fires once per combat.",
                 "FireMode": "single",
                 "MechDamage": true
-            }
+            },
+            "Mags": 1
         }
     },
     "weapon_grapple_crossbow":

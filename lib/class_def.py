@@ -4,6 +4,7 @@ from typing import Union,Any
 import marshmallow
 import marshmallow_dataclass
 import copy
+import itertools
 import streamlit as st
 
 def serializeSuff(value):
@@ -90,17 +91,17 @@ class PC():
     pc_debt:int = None
     pc_stuff:AnyStuffType = field(default_factory=list)
     pc_equipped_armor:AnyStuffType = field(default_factory=list)
-    
-    def flatStuffList(self):
-        return self.recursiveListFlatten(copy.deepcopy(self.pc_stuff))
-
-    def recursiveListFlatten(self,inList):
-        if isinstance(inList,list):
-            for item in inList:
-                if not isinstance(item,Feature):
-                    if item.p_sub_stuff is not None:
-                        inList.append(self.recursiveListFlatten(item.p_sub_stuff))
-        return inList
+        
+    def equipNewArmor(self,newArmor):
+        st.write("change equipped armor to: " + str(newArmor))
+        for stuffItem in self.pc_stuff:
+            if isinstance(stuffItem,Armor):
+                if stuffItem == newArmor:
+                    self.pc_equipped_armor = stuffItem
+                    if stuffItem.p_equipped is not None:
+                        stuffItem.p_equipped = True
+                elif stuffItem.p_equipped is not None:
+                    stuffItem.p_equipped = False
     
 @dataclass(base_schema=BaseSchema)
 class DamageField():
@@ -127,10 +128,6 @@ class App(Stuff):
     p_damage:DamageField = None
     
 @dataclass(base_schema=BaseSchema)
-class Cyberware(Stuff):
-    p_pc_desc_text:str = None
-    
-@dataclass(base_schema=BaseSchema)
 class Nano(Stuff):
     pass
 
@@ -150,7 +147,7 @@ class Item(Stuff):
     
 @dataclass(base_schema=BaseSchema)    
 class Ammo(Stuff):
-    p_equipped:BoolOrNoneType = None
+    pass
     
 @dataclass(base_schema=BaseSchema)
 class Armor(Item):
@@ -161,9 +158,13 @@ class Cyberdeck(Item):
     p_slot_max:int = None
     p_slots:list[App] = field(default_factory=list)
     
+@dataclass(base_schema=BaseSchema)
+class Cyberware(Item):
+    p_pc_desc_text:str = None
+    
 @dataclass(base_schema=BaseSchema)    
 class Drug(Stuff):
-    p_equipped:BoolOrNoneType = None
+    pass
     
 @dataclass(base_schema=BaseSchema)
 class Weapon(Item):
@@ -204,7 +205,7 @@ class SheetAttributes():
         self.updateStuff(self.stuff)
             
     def updateStuff(self,stuffList):
-        self.stuff = copy.deepcopy(stuffList)
+        self.stuff = stuffList
         self.callAllUpdates()
         
     def callAllUpdates(self):
@@ -228,7 +229,7 @@ class SheetAttributes():
         self.cyberwareList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Cyberware)]
             
     def updateItemList(self):
-        self.itemList = [stuffItem for stuffItem in self.stuff if issubclass(type(stuffItem),Item) and not isinstance(stuffItem,Armor) and not isinstance(stuffItem,Weapon)]
+        self.itemList = [stuffItem for stuffItem in self.stuff if issubclass(type(stuffItem),Item) and not isinstance(stuffItem,Armor) and not isinstance(stuffItem,Weapon) and not isinstance(stuffItem,Cyberware)]
         self.itemList.sort(key = lambda item: str(type(item)))
             
     def updateNanoInfestationList(self):
@@ -241,12 +242,12 @@ class SheetAttributes():
         self.weaponList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Weapon)]
         
     def updateCurrentCarry(self):
-        self.currentCarry = sum(1 for item in self.stuff if issubclass(type(item),Item) and item.p_equipped)
+        self.currentCarry = sum(1 for item in self.stuff if issubclass(type(item),Item) and item.p_equipped and not isinstance(item,Cyberware))
             
     def updateFlatStuffList(self):
         if self.stuff:
             self.flatStuffList = []
-            self.recursiveListFlatten(self.stuff)
+            self.recursiveListFlatten(copy.deepcopy(self.stuff))
             
     def recursiveListFlatten(self,inList):
         if isinstance(inList,list):
@@ -259,3 +260,18 @@ class SheetAttributes():
 
 def getEmptyRandomItem():
     return StuffField("RandomItem", None, {})
+    
+class ItemCounter():
+    def __init__(self):
+        self.subCounter = None
+        self.reset()
+    def reset(self):
+        self.c = itertools.count()
+        if self.subCounter is not None:
+            self.subCounter.reset()
+    def getNext(self):
+        return next(self.c)
+    def getSubCounter(self):
+        if self.subCounter is None:
+            self.subCounter = ItemCounter()
+        return self.subCounter

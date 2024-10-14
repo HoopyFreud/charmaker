@@ -56,13 +56,24 @@ def finalizeStuff():
         ls.clearCharCache()
         st.session_state.stage = -1
         
+def sheetEditStats():
+    lsup.appUpdatePCStateKeys(fieldType = "stats")
+    st.session_state.sheetEditStats = True
+    
+def sheetCancelStats():
+    st.session_state.sheetEditStats = False
+        
+def sheetSaveStats():
+    ls.updateChar(fieldType = "stats",cacheType=None)
+    st.session_state.sheetEditStats = False
+        
 def sheetEditDesc():
     lsup.appUpdatePCStateKeys(fieldType = "desc")
-    st.session_state.stage = -2
+    st.session_state.sheetEditDesc = True
     
 def sheetCancelDesc():
-    st.session_state.stage = -1
+    st.session_state.sheetEditDesc = False
         
 def sheetSaveDesc():
     ls.updateChar(fieldType = "desc",cacheType=None)
-    st.session_state.stage = -1
+    st.session_state.sheetEditDesc = False

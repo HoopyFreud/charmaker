@@ -230,12 +230,12 @@ def writeStuffSelection():
     enumStart = 0
     if "RandomClassStuff" in st.session_state.class_table.keys():
         enumStart = 1
-        st.header(st.session_state.class_table["RandomClassStuffText"])
+        st.header(st.session_state.class_table["RandomClassStuffText"], anchor=False)
         entryID = "0"
         insertStuffEntry(lcd.getEmptyRandomItem(), entryID, customStuffTable = st.session_state.class_table["RandomClassStuff"])
-        st.header("You also have:")
+        st.header("You also have:", anchor=False)
     else:
-        st.header("You have:")
+        st.header("You have:", anchor=False)
     stuffList = st.session_state.class_table["Stuff"]
     if "ClassStuff" in st.session_state.class_table.keys():
         stuffList = st.session_state.class_table["ClassStuff"] + stuffList
@@ -269,16 +269,16 @@ def getPropKey(entryID, propID):
 #fixed text is stuff like name and description - no lists, no unknowns, no subfields
 def writeFixedText(stuff):
     if stuff.p_name:
-        st.subheader(stuff.p_name)
+        st.subheader(stuff.p_name, anchor=False)
     if "Description" in stuff.p_data.keys():
         st.write(stuff.p_data["Description"])
     if stuff.p_type == "Feature":
         if stuff.p_name:
             with st.container(border=True):
-                st.subheader("Feature")
+                st.subheader("Feature", anchor=False)
                 st.write(stuff.p_data["FeatureText"])
         else:
-            st.subheader("Feature")
+            st.subheader("Feature", anchor=False)
             st.write(stuff.p_data["FeatureText"])
     if "Damage" in stuff.p_data.keys():
         if isinstance(stuff.p_data["Damage"],list):
@@ -299,7 +299,7 @@ def writeDamage(damageField):
     fireModeDict = {"melee": "Melee", "throw": "Thrown", "single": "Single-shot", "auto": "Autofire", "remote": "Remote control"}
     with st.container(border=True):
         if "Name" in damageField.keys():
-            st.subheader(damageField["Name"])
+            st.subheader(damageField["Name"], anchor=False)
         if "FireMode" in damageField.keys():
             if isinstance(damageField["FireMode"],list):
                 st.write("/".join([fireModeDict[mode] for mode in damageField["FireMode"]]))
