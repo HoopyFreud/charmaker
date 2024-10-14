@@ -101,11 +101,8 @@ def statifyString(inString):
                 inString = re.sub("("+shortStatTable[index]+")","-"+statValString,inString)
     return inString
 
-#callback function for input changes to reset error unconditionally
-def repCarryCap(carryList):
-    carryList = [statifyString(carryString) for carryString in carryList]
-    if evaluate:
-        carryList = [str(evaluate(carryString).item()) for carryString in carryList]
+def repCarryCap(carryList, bonus = 0):
+    carryList = [str(evaluate(statifyString(statifyString(carryString + " + " + str(bonus)))).item()) for carryString in carryList]
     return " &nbsp;| &nbsp;".join(carryList)
 
 #turn JSON dictionaries into StuffField objects
@@ -173,10 +170,14 @@ def generateObjectFromStuffField(stuff):
     if "Description" in stuff.p_data.keys():
         stuffObj.p_desc = stuff.p_data["Description"]
         
+    extraData = {}
     if "Armor" in stuff.p_data.keys():
         stuffObj.p_armor = stuff.p_data["Armor"]
     if "DescText" in stuff.p_data.keys():
-        stuffObj.p_pc_desc_text = stuff.p_data["DescText"]
+        if hasattr(stuffObj,"p_pc_desc_text"):
+            stuffObj.p_pc_desc_text = stuff.p_data["DescText"]
+        else:
+            extraData["p_pc_desc_text"] = stuff.p_data["DescText"]
     if "DamageReduction" in stuff.p_data.keys():
         stuffObj.p_armor = stuff.p_data["DamageReduction"]
     if "Equipped" in stuff.p_data.keys():
@@ -192,12 +193,12 @@ def generateObjectFromStuffField(stuff):
         stuffObj.p_equipped = stuff.p_data["Equipped"]
     if "PropChange" in stuff.p_data.keys():
         pcData = stuff.p_data["PropChange"]
-        stuffObj.p_prop_change.append(lcd.PropChangeField(pcData["Property"],pcData["Value"],pcData["DispName"]))
+        stuffObj.p_prop_change = lcd.PropChangeField(pcData["Property"],pcData["Value"],pcData["DispName"],stuffObj.p_name)
     if "Slots" in stuff.p_data.keys():
         stuffObj.p_slot_max = stuff.p_data["Slots"]
     if "Uses" in stuff.p_data.keys():
         stuffObj.p_uses = stuff.p_data["Uses"]
-    return stuffObj
+    return stuffObj, extraData
         
 def getDamageObject(damageField):
     if isinstance(damageField,list):

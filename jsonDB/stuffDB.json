@@ -414,7 +414,7 @@
             "DescText": "Your muscles bulge.",
             "PropChange":
             {
-                "Property": "pc_carrying_max",
+                "Property": "pc_carry_max",
                 "Value": "4",
                 "DispName": "Carrying Capacity Increase"
             },
@@ -751,7 +751,7 @@
             "Trigger": "A sudden vibration. The sound of shattering glass. Extreme pain. You take 1 point of damage for each item you are carrying.",
             "PropChange":
             {
-                "Property": "pc_carrying_max",
+                "Property": "pc_carry_max",
                 "Value": "-1",
                 "DispName": "Carrying Capacity Decrease"
             }
@@ -889,7 +889,12 @@
         {
             "Name": "Backpack",
             "Description": "Holds 7 normal-sized items.",
-            "Equipped": null
+            "PropChange":
+            {
+                "Property": "pc_carry_max",
+                "Value": "7",
+                "DispName": "Carrying Capacity Increase"
+            }
         }
     },
     "item_bio_scanner":

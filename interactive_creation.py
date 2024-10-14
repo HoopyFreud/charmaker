@@ -14,11 +14,11 @@ def dispCharCreation():
             with col1:
                 st.radio('Class', dropdownList, horizontal=True, key="t_char_class", label_visibility="collapsed", index=None)
             with col2:
-                st.button('Random', key = "class_random", on_click = lu.randomSelector, args=["t_char_class",dropdownList])
+                st.button('Random', key = "class_random", on_click = lu.randomSelector, args=["t_char_class",dropdownList], use_container_width=True)
             with col3:
-                st.button('Finalize', key = "class_finalize", on_click = lsc.finalizeClass)
+                st.button('Finalize', key = "class_finalize", on_click = lsc.finalizeClass, use_container_width=True)
             if st.session_state.err_text_class:
-                st.error(lu.errTextDB["err_text_class"])
+                st.error(lu.errTextDB["err_text_class"], use_container_width=True)
         else:
             st.header("Class: " + st.session_state.PC.pc_class, anchor=False)
             
@@ -49,9 +49,9 @@ def dispCharCreation():
                 rollString = lu.statifyString(st.session_state.class_table["ToughnessRoll"])
                 st.text_input(statList[4]+":", key = "t_char_tou", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=["t_char_tou","err_text_stat"], kwargs={"roll": rollString})
             with col6:
-                st.button('Random', key = "stat_random", on_click = lc.randomStats)
+                st.button('Random', key = "stat_random", on_click = lc.randomStats, use_container_width=True)
             with col7:
-                st.button('Finalize', key = "stat_finalize", on_click = lsc.finalizeStats)
+                st.button('Finalize', key = "stat_finalize", on_click = lsc.finalizeStats, use_container_width=True)
             if st.session_state.err_text_stat:
                 st.error(lu.errTextDB["err_text_stat"])
         else:
@@ -96,9 +96,9 @@ def dispCharCreation():
                 rollString = lu.statifyString(st.session_state.class_table["DebtRoll"])
                 st.text_input(secondaryStatList[4]+":", key = "t_char_debt", placeholder=rollString, label_visibility="collapsed", on_change=lu.changeNumInput, args=("t_char_debt","err_text_secondary_stat"), kwargs={"roll": rollString})
             with col6:
-                st.button('Random', key = "sec_stat_random", on_click = lc.randomSecondaryStats)
+                st.button('Random', key = "sec_stat_random", on_click = lc.randomSecondaryStats, use_container_width=True)
             with col7:
-                st.button('Finalize', key = "sec_stat_finalize", on_click = lsc.finalizeSecondaryStats)
+                st.button('Finalize', key = "sec_stat_finalize", on_click = lsc.finalizeSecondaryStats, use_container_width=True)
             if st.session_state.err_text_secondary_stat:
                 st.error(lu.errTextDB["err_text_secondary_stat"])
         else:

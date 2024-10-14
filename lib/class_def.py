@@ -90,14 +90,13 @@ class PC():
     pc_creds:int = None
     pc_debt:int = None
     pc_stuff:AnyStuffType = field(default_factory=list)
-    pc_equipped_armor:AnyStuffType = field(default_factory=list)
+    pc_equipped_armor:AnyStuffType = None
         
     def equipNewArmor(self,newArmor):
-        st.write("change equipped armor to: " + str(newArmor))
+        self.pc_equipped_armor = newArmor
         for stuffItem in self.pc_stuff:
             if isinstance(stuffItem,Armor):
                 if stuffItem == newArmor:
-                    self.pc_equipped_armor = stuffItem
                     if stuffItem.p_equipped is not None:
                         stuffItem.p_equipped = True
                 elif stuffItem.p_equipped is not None:
@@ -113,8 +112,9 @@ class DamageField():
 @dataclass(base_schema=BaseSchema)
 class PropChangeField():
     p_property:str = None
-    p_value:Union[int,str] = None
+    p_value:int = None
     p_dispName:str = None
+    p_source:str = None
     
 @dataclass(base_schema=BaseSchema)
 class Stuff():
@@ -199,6 +199,7 @@ class SheetAttributes():
     nanoInfestationList:AnyStuffType = field(default_factory=list)
     unitList:AnyStuffType = field(default_factory=list)
     weaponList:AnyStuffType = field(default_factory=list)
+    propChangeList:list[PropChangeField] = field(default_factory=list)
     currentCarry:int = 0
 
     def __post_init__(self):
@@ -218,6 +219,7 @@ class SheetAttributes():
         self.updateUnitList()
         self.updateWeaponList()
         self.updateCurrentCarry()
+        self.updatePropChangeList()
             
     def updateAppList(self):
         self.appList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,App)]
@@ -243,20 +245,23 @@ class SheetAttributes():
         
     def updateCurrentCarry(self):
         self.currentCarry = sum(1 for item in self.stuff if issubclass(type(item),Item) and item.p_equipped and not isinstance(item,Cyberware))
+        
+    def updatePropChangeList(self):
+        self.propChangeList = []
+        for item in self.flatStuffList:
+            if issubclass(type(item),Stuff) and item.p_prop_change is not None:
+                self.propChangeList.append(item.p_prop_change)
+            
+    def recursiveListFlatten(self,inItem):
+        self.flatStuffList.append(inItem)
+        if issubclass(type(inItem),Stuff) and inItem.p_sub_stuff is not None:
+            self.recursiveListFlatten(inItem.p_sub_stuff)
             
     def updateFlatStuffList(self):
         if self.stuff:
             self.flatStuffList = []
-            self.recursiveListFlatten(copy.deepcopy(self.stuff))
-            
-    def recursiveListFlatten(self,inList):
-        if isinstance(inList,list):
-            for item in inList:
-                if not isinstance(item,Feature):
-                    if item.p_sub_stuff is not None:
-                        self.recursiveListFlatten(item.p_sub_stuff)
-        else:
-            self.flatStuffList.append(inList)
+            for item in self.stuff:
+                self.recursiveListFlatten(item)
 
 def getEmptyRandomItem():
     return StuffField("RandomItem", None, {})

@@ -15,7 +15,7 @@ char_export_json = ls.saveToJson()
 
 col1, col2, col3 = st.columns([1,1,1],vertical_alignment="bottom")
 with col1:
-    st.download_button('Save Character', char_export_json, file_name=("cbuilder_c_b_"+(st.session_state.PC.pc_name if st.session_state.PC.pc_name is not None else "")+".yaml"), disabled=(st.session_state.stage>=0), key = "save_character", use_container_width=True)
+    st.download_button('Save Character', char_export_json, file_name=("cbuilder_c_b_"+(st.session_state.PC.pc_name if st.session_state.PC.pc_name is not None else "")+".json"), disabled=(st.session_state.stage>=0), key = "save_character", use_container_width=True)
 with col2:
     st.button('New Character', key = "new_character", on_click = lsc.charReset, use_container_width=True)
 with col3:

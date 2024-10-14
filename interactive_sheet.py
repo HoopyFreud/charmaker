@@ -58,7 +58,7 @@ def dispCharSheet():
     with col1:
         with st.container(key="secondary_stat_sidebar"):
             #HP
-            subcol1, subcol2, subcol3, subcol4 = st.columns([1,1,0.25,1.5],vertical_alignment="center")
+            subcol1, subcol2, subcol3, subcol4 = st.columns([3,3,1,4],vertical_alignment="center")
             with subcol1:
                 st.header("HP:", anchor=False)
             with subcol2:
@@ -66,9 +66,18 @@ def dispCharSheet():
             with subcol3:
                 st.header("/", anchor=False)
             with subcol4:
-                with st.popover(str(st.session_state.PC.pc_hp_max)):
-                    st.write("Base HP")
+                totalVal = st.session_state.PC.pc_hp_max
+                entries = []
+                for change in filter(lambda change: change.p_property == "pc_hp_max", st.session_state.SheetAttributes.propChangeList):
+                    entries.append(change)
+                    totalVal = totalVal + change.p_value
+                with st.popover(str(totalVal), use_container_width=True):
+                    st.write("Base HP:")
                     st.number_input("Base HP", key="c_pc_hp_max", on_change=ls.updateChar, kwargs={"fieldType":"hp_max","cacheType":None}, step=1, min_value=0, label_visibility="collapsed")
+                    if len(entries) > 0:
+                        st.subheader("Bonuses and penalties", anchor=False)
+                        for entry in entries:
+                            st.write(entry.p_source + ": " + str(entry.p_value))
             st.divider()
             #Glitches
             subcol1, subcol2 = st.columns([1,1.5],vertical_alignment="center")
@@ -80,7 +89,7 @@ def dispCharSheet():
                 st.button("Reset ("+st.session_state.PC.pc_glitch_roll+")", on_click=ls.rollGlitch, use_container_width=True)
             st.divider()
             #Carrying capacity
-            subcol1, subcol2, subcol3, subcol4 = st.columns([2,0.5,0.5,1.5],vertical_alignment="center")
+            subcol1, subcol2, subcol3, subcol4 = st.columns([4,1,1,4],vertical_alignment="center")
             with subcol1:
                 st.header("Carrying Capacity:", anchor=False)
             with subcol2:
@@ -88,7 +97,17 @@ def dispCharSheet():
             with subcol3:
                 st.header("/", anchor=False)
             with subcol4:
-                st.header(lu.repCarryCap(st.session_state.PC.pc_carry_max), anchor=False)
+                bonus = 0
+                entries = []
+                for change in filter(lambda change: change.p_property == "pc_carry_max", st.session_state.SheetAttributes.propChangeList):
+                    entries.append(change)
+                    bonus = bonus + change.p_value
+                with st.popover(lu.repCarryCap(st.session_state.PC.pc_carry_max, bonus=bonus), use_container_width=True):
+                    st.write("Base Capacity: " + lu.repCarryCap(st.session_state.PC.pc_carry_max))
+                    if len(entries) > 0:
+                        st.subheader("Bonuses and penalties", anchor=False)
+                        for entry in entries:
+                            st.write(entry.p_source + ": " + str(entry.p_value))
             st.divider()
             #Credits
             subcol1, subcol2 = st.columns([1,2],vertical_alignment="center")
@@ -183,7 +202,7 @@ def dispCharSheet():
                         ls.writeStuff(item)
         #Nanos and infestations
         if st.session_state.SheetAttributes.nanoInfestationList:
-            with st.expander("Nano power and infestations"):
+            with st.expander("Nano powers and infestations"):
                 for itemIndex,item in enumerate(st.session_state.SheetAttributes.nanoInfestationList):
                     if itemIndex%3 == 0:
                         col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")

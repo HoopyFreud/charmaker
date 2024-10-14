@@ -104,7 +104,7 @@ def writeFeatures():
 def writeArmor():
     with st.container(border=True):
         st.subheader("Armor")
-        st.selectbox("Armor", st.session_state.SheetAttributes.armorList, index=None, format_func=(lambda entry: entry.p_name), key="c_pc_equipped_armor", on_change=updateChar, kwargs={"fieldType":"equipped_armor","cacheType":None}, label_visibility="collapsed")
+        st.selectbox("Armor", st.session_state.SheetAttributes.armorList, format_func=(lambda entry: entry.p_name), key="c_pc_equipped_armor", on_change=updateChar, kwargs={"fieldType":"equipped_armor","cacheType":None}, label_visibility="collapsed")
         item = st.session_state.c_pc_equipped_armor
         if item.p_equipped is None:
             st.write("No equip cost")

@@ -27,7 +27,7 @@
                     "Damage": "1d4",
                     "FireMode": "remote"
                 },
-                "Armor": "-d2",
+                "DamageReduction": "-d2",
                 "Unknown":
                 [
                     {
@@ -50,7 +50,7 @@
                     "Damage": "d8a",
                     "FireMode": "remote"
                 },
-                "Armor": "-d6",
+                "DamageReduction": "-d6",
                 "Unknown":
                 [
                     {
@@ -109,7 +109,7 @@
                     "Damage": "d12a",
                     "FireMode": "remote"
                 },
-                "Armor": "-d6",
+                "DamageReduction": "-d6",
                 "Unknown":
                 [
                     {

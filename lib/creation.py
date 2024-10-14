@@ -101,6 +101,7 @@ def burnPCDesc():
 #calculate secondary stats - return true if successful
 def burnPCStuff():
     st.session_state.PC.pc_stuff = []
+    st.session_state.b_pc_desc = st.session_state.PC.pc_desc
     enumStart = 0
     if "RandomClassStuff" in st.session_state.class_table.keys():
         enumStart = 1
@@ -111,11 +112,12 @@ def burnPCStuff():
     for stuffNumber,stuffItem in enumerate(stuffList, start=enumStart):
         appendOrExtendStuffList(getStuffFromField(stuffItem,str(stuffNumber)))
     st.session_state.PC.pc_equipped_armor = next(filter(lambda item: isinstance(item,lcd.Armor), st.session_state.PC.pc_stuff), None)
-    noArmorObj = lu.generateObjectFromStuffField(lu.stuffDB["armor_no_armor"])
+    noArmorObj,_ = lu.generateObjectFromStuffField(lu.stuffDB["armor_no_armor"])
     if noArmorObj not in st.session_state.PC.pc_stuff:
         appendOrExtendStuffList(noArmorObj)
     if None in st.session_state.PC.pc_stuff:
         return False
+    st.session_state.PC.pc_desc = st.session_state.b_pc_desc
     return True
     
 #calculate secondary stats - return true if successful
@@ -147,7 +149,8 @@ def getStuffFromField(stuff, entryID):
     elif stuff.p_type == "RandomItem":
         return traceStuff(entryID, subEntryID)
     else:
-        stuffObj = lu.generateObjectFromStuffField(stuff)
+        stuffObj,extraData = lu.generateObjectFromStuffField(stuff)
+        processExtraStuffData(extraData)
         if stuffObj is None:
             return None
         #look for sub-stuff
@@ -197,7 +200,7 @@ def getUnknownFieldValues(stuffObj,unknownPropList,entryID):
             case "Mags":
                 stuffObj.p_mags = fieldValue
             case "PropChange":
-                stuffObj.p_prop_change.append(lcd.PropChangeField(prop["Property"],fieldValue,prop["DispName"]))
+                stuffObj.p_prop_change = lcd.PropChangeField(prop["Property"],fieldValue,prop["DispName"],stuffObj.p_name)
             case "Slots":
                 stuffObj.p_slot_max = fieldValue
             case "Uses":
@@ -225,6 +228,13 @@ def processStuffReplacement(stuffTableEntry):
     if stuffTableEntry.p_name in st.session_state.class_table["StuffReplacement"].keys():
         stuffTableEntry = lu.processStuff(st.session_state.class_table["StuffReplacement"][stuffTableEntry.p_name])
     return stuffTableEntry
+
+def processExtraStuffData(extraData):
+    for extraField in extraData.items():
+        fieldName = extraField[0]
+        fieldVal = extraField[1]
+        if fieldName == "p_pc_desc_text":
+            st.session_state.b_pc_desc = st.session_state.b_pc_desc + "  \n" + fieldVal
 
 def writeStuffSelection():
     enumStart = 0
@@ -286,9 +296,8 @@ def writeFixedText(stuff):
                 writeDamage(damageInstance)
         else:
             writeDamage(stuff.p_data["Damage"])
-    if stuff.p_type == "Armor":
-        if "DamageReduction" in stuff.p_data.keys():
-            st.write("Damage reduction: "+stuff.p_data["DamageReduction"])
+    if "DamageReduction" in stuff.p_data.keys():
+        st.write("Damage reduction: "+stuff.p_data["DamageReduction"])
     if stuff.p_type == "Infestation":
         st.markdown(":radioactive_sign:: "+stuff.p_data["Trigger"])
     if "DescText" in stuff.p_data.keys():
@@ -332,7 +341,7 @@ def writeUnknownFields(stuff, entryID):
             with col1:
                 st.text_input(dispName, key=propKey, label_visibility="collapsed", placeholder=rollString, on_change=lu.changeNumInput, args=[propKey,errKey], kwargs={"roll": rollString})
             with col2:
-                st.button('Random', key=propKey+"_random", on_click=lu.randomNumber, args=[propKey,rollString], kwargs={"errKey": errKey,"lowerLimit":1})
+                st.button('Random', key=propKey+"_random", on_click=lu.randomNumber, args=[propKey,rollString], kwargs={"errKey": errKey,"lowerLimit":1}, use_container_width=True)
             #check for errors on page load
             errCheck = lu.changeNumInput(propKey,errKey,roll=rollString,override=errCheck)
         elif prop["Entry"] == "FixedText":
@@ -345,7 +354,7 @@ def writeUnknownFields(stuff, entryID):
             with col1:
                 st.selectbox(dispName, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry), key=propKey, label_visibility="collapsed", index=None, placeholder=rollString, on_change=lu.resetErrField, args=[errKey])
             with col2:
-                st.button('Random', key=propKey+"_random", on_click=lu.randomSelector, args=[propKey,dropdownList], kwargs={"errKey": errKey})
+                st.button('Random', key=propKey+"_random", on_click=lu.randomSelector, args=[propKey,dropdownList], kwargs={"errKey": errKey}, use_container_width=True)
 
 #write subfields - objects within the object
 def writeChildStuff(stuff, entryID, customStuffTable):
@@ -381,7 +390,7 @@ def writeChildStuff(stuff, entryID, customStuffTable):
         with col1:
             selectedStuffObject = st.selectbox(labelString, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry.p_name), key=optionKey, index=None, placeholder=rollString, on_change=resetStuffSelector, args=[subEntryID,errKey], label_visibility="collapsed")
         with col2:
-            st.button('Random', key=optionKey+"_random", on_click=lu.randomSelector, args=[optionKey,dropdownList], kwargs={"errKey": errKey})
+            st.button('Random', key=optionKey+"_random", on_click=lu.randomSelector, args=[optionKey,dropdownList], kwargs={"errKey": errKey}, use_container_width=True)
         if selectedStuffObject:
             insertStuffEntry(selectedStuffObject, subEntryID)
     #SubStuff gets a double-name for the same reason as above
