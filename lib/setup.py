@@ -50,6 +50,8 @@ def appSetupKeys():
         st.session_state.t_char_creds = None
     if "t_char_debt" not in st.session_state:
         st.session_state.t_char_debt = None
+    if "b_pc_desc" not in st.session_state:
+        st.session_state.b_pc_desc = None
         
     if "c_pc_agi" not in st.session_state:
         st.session_state.c_pc_agi = None

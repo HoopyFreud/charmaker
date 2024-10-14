@@ -102,7 +102,7 @@ def statifyString(inString):
     return inString
 
 def repCarryCap(carryList, bonus = 0):
-    carryList = [str(evaluate(statifyString(statifyString(carryString + " + " + str(bonus)))).item()) for carryString in carryList]
+    carryList = [str(evaluate(statifyString(carryString + " + " + str(bonus))).item()) for carryString in carryList]
     return " &nbsp;| &nbsp;".join(carryList)
 
 #turn JSON dictionaries into StuffField objects
