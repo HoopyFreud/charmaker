@@ -58,7 +58,7 @@ def burnPCSecondaryStats():
         st.session_state.PC.pc_hp_max = max(1,st.session_state.PC.pc_hp_max)
         st.session_state.PC.pc_hp_current = st.session_state.PC.pc_hp_max
         st.session_state.PC.pc_glitch_roll = lu.statifyString(st.session_state.class_table["GlitchRoll"])
-        st.session_state.PC.pc_carry_max = st.session_state.class_table["CarryingCapacityStrings"]
+        st.session_state.PC.pc_carry_max = st.session_state.class_table["CarryingCapacityString"]
         return True
     except:
         return False

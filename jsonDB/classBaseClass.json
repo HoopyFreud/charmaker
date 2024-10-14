@@ -11,11 +11,7 @@
     "CreditsRoll": "(2d6)*10",
     "DebtRoll": "(3d6)*1000",
     "DebtLenderRoll": "1d12",
-    "CarryingCapacityStrings": 
-    [
-        "8+_s",
-        "2*(8+_s)"
-    ],
+    "CarryingCapacityString": "8+_s",
     "Stuff":
     [
         {

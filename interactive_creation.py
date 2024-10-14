@@ -86,7 +86,7 @@ def dispCharCreation():
             with col3:
                 st.write(secondaryStatList[2]+":")
                 with st.container(key="carry_creation_container", border=True):
-                    st.write(lu.repCarryCap(st.session_state.class_table["CarryingCapacityStrings"]))
+                    st.write(lu.repCarryCap(st.session_state.class_table["CarryingCapacityString"]))
             with col4:
                 st.write(secondaryStatList[3]+":")
                 rollString = lu.statifyString(st.session_state.class_table["CreditsRoll"])

@@ -84,7 +84,7 @@ class PC():
     pc_tou:int = None
     pc_hp_max:int = None
     pc_hp_current:int = None
-    pc_carry_max:list[str] = field(default_factory=list)
+    pc_carry_max:str = None
     pc_glitch_current:int = None
     pc_glitch_roll:str = None
     pc_creds:int = None
@@ -112,7 +112,7 @@ class DamageField():
 @dataclass(base_schema=BaseSchema)
 class PropChangeField():
     p_property:str = None
-    p_value:int = None
+    p_value:str = None
     p_dispName:str = None
     p_source:str = None
     

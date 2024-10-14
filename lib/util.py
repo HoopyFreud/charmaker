@@ -101,8 +101,9 @@ def statifyString(inString):
                 inString = re.sub("("+shortStatTable[index]+")","-"+statValString,inString)
     return inString
 
-def repCarryCap(carryList, bonus = 0):
-    carryList = [str(evaluate(statifyString(carryString + " + " + str(bonus))).item()) for carryString in carryList]
+def repCarryCap(carryString, bonus = 0):
+    carryString = evaluate(statifyString(carryString + "+" + str(bonus))).item()
+    carryList = [str(carryString),str(2*carryString)]
     return " &nbsp;| &nbsp;".join(carryList)
 
 #turn JSON dictionaries into StuffField objects

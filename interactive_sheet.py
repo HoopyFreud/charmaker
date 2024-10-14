@@ -69,15 +69,16 @@ def dispCharSheet():
                 totalVal = st.session_state.PC.pc_hp_max
                 entries = []
                 for change in filter(lambda change: change.p_property == "pc_hp_max", st.session_state.SheetAttributes.propChangeList):
-                    entries.append(change)
-                    totalVal = totalVal + change.p_value
+                    newBonus = lu.evaluate(lu.statifyString(change.p_value)).item()
+                    totalVal = totalVal + newBonus
+                    entries.append([change.p_source,str(newBonus)])
                 with st.popover(str(totalVal), use_container_width=True):
                     st.write("Base HP:")
                     st.number_input("Base HP", key="c_pc_hp_max", on_change=ls.updateChar, kwargs={"fieldType":"hp_max","cacheType":None}, step=1, min_value=0, label_visibility="collapsed")
                     if len(entries) > 0:
                         st.subheader("Bonuses and penalties", anchor=False)
                         for entry in entries:
-                            st.write(entry.p_source + ": " + str(entry.p_value))
+                            st.write(entry[0] + ": " + entry[1])
             st.divider()
             #Glitches
             subcol1, subcol2 = st.columns([1,1.5],vertical_alignment="center")
@@ -100,14 +101,15 @@ def dispCharSheet():
                 bonus = 0
                 entries = []
                 for change in filter(lambda change: change.p_property == "pc_carry_max", st.session_state.SheetAttributes.propChangeList):
-                    entries.append(change)
-                    bonus = bonus + change.p_value
+                    newBonus = lu.evaluate(lu.statifyString(change.p_value)).item()
+                    bonus = bonus + newBonus
+                    entries.append([change.p_source,str(newBonus)])
                 with st.popover(lu.repCarryCap(st.session_state.PC.pc_carry_max, bonus=bonus), use_container_width=True):
                     st.write("Base Capacity: " + lu.repCarryCap(st.session_state.PC.pc_carry_max))
                     if len(entries) > 0:
                         st.subheader("Bonuses and penalties", anchor=False)
                         for entry in entries:
-                            st.write(entry.p_source + ": " + str(entry.p_value))
+                            st.write(entry[0] + ": " + entry[1])
             st.divider()
             #Credits
             subcol1, subcol2 = st.columns([1,2],vertical_alignment="center")
