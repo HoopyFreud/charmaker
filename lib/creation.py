@@ -2,6 +2,7 @@ import lib.util as lu
 import lib.class_def as lcd
 import streamlit as st
 import json
+import base64
 
 #calculate the mod value for a given stat roll
 def mapStatMod(stat):
@@ -440,16 +441,16 @@ def randomDesc():
     
 @st.cache_data
 def getClassObject(tableName: str):
-    with open('jsonDB/classBaseClass.json', encoding='utf-8') as fh:
-        classDict = json.load(fh)
+    with open('jsonDB/classBaseClass', encoding='utf-8') as fh:
+        classDict = json.loads(base64.b64decode(fh.read()).decode('utf-8'))
     if tableName:
         with open('jsonDB/'+tableName, encoding='utf-8') as fh:
-            newClassDict = json.load(fh)
+            newClassDict = json.loads(base64.b64decode(fh.read()).decode('utf-8'))
             classDict.update(newClassDict)
     return classDict
     
 mapClassTable = lu.fieldTableDB["ClassTableDict"]
-stuffTableDB = lu.getJsonObject("stuffTables.json")
+stuffTableDB = lu.getJsonObject("stuffTables")
 for table in list(stuffTableDB.keys()):
     stuffTableDB[table] = {k: lu.processStuff(v) for k,v in stuffTableDB[table].items()}
-wordTableDB = lu.getJsonObject("wordTables.json")
+wordTableDB = lu.getJsonObject("wordTables")

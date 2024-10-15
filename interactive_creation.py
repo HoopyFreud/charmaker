@@ -18,7 +18,7 @@ def dispCharCreation():
             with col3:
                 st.button('Finalize', key = "class_finalize", on_click = lsc.finalizeClass, use_container_width=True)
             if st.session_state.err_text_class:
-                st.error(lu.errTextDB["err_text_class"], use_container_width=True)
+                st.error(lu.errTextDB["err_text_class"])
         else:
             st.header("Class: " + st.session_state.PC.pc_class, anchor=False)
             

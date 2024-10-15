@@ -101,7 +101,7 @@ def appCSS():
         div:has(> div > .st-key-carry_creation_container) {{padding:0.5rem;background-color:{secondaryBackgroundColor};border:None}}
         .st-key-stat_header div[data-testid="stMarkdownContainer"] {{margin-bottom: initial !important}}
         .st-key-stat_header h2 {{padding:0;font-size: 1.25rem;font-weight: 400}}
-        .char_name_header {{width:100%;text-align:center}}
+        .st-key-char_name_header {{width:100%;text-align:center}}
         .char_stat_block {{width:100%;display:flex;justify-content:space-between;font-size: 1.25rem;font-weight: 400}}
         .st-key-secondary_stat_sidebar hr {{margin:0}}
         .st-key-secondary_stat_sidebar h2 {{font-size: 1.25rem;font-weight: 400}}

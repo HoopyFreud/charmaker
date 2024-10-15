@@ -58,6 +58,17 @@ class AnyStuffField(marshmallow.fields.Field):
         else:
             return deserializeSuff(value)
 
+class AppOrNoneField(marshmallow.fields.Field):
+    def __init__(self, *args, **kwargs):
+        kwargs['allow_none'] = True
+        super().__init__(*args, **kwargs)
+    def _serialize(self, value, attr, obj, **kwargs):
+        if value is None:
+            return None
+        return value.Schema().dump(value)
+    def _deserialize(self, value, attr, obj, **kwargs):
+        return App.Schema().load(value)
+
 class BoolOrNoneField(marshmallow.fields.Field):
     def __init__(self, *args, **kwargs):
         kwargs['allow_none'] = True
@@ -66,11 +77,14 @@ class BoolOrNoneField(marshmallow.fields.Field):
 class AnyStuffType():
     pass
         
+class AppOrNoneType():
+    pass
+        
 class BoolOrNoneType():
     pass
 
 class BaseSchema(marshmallow.Schema):
-    TYPE_MAPPING = {AnyStuffType: AnyStuffField, BoolOrNoneType: BoolOrNoneField}
+    TYPE_MAPPING = {AnyStuffType: AnyStuffField, AppOrNoneType: AppOrNoneField, BoolOrNoneType: BoolOrNoneField}
 
 @dataclass(base_schema=BaseSchema)
 class PC():
@@ -156,7 +170,7 @@ class Armor(Item):
 @dataclass(base_schema=BaseSchema)
 class Cyberdeck(Item):
     p_slot_max:int = None
-    p_slots:list[App] = field(default_factory=list)
+    p_slots:list[AppOrNoneType] = field(default_factory=list)
     
 @dataclass(base_schema=BaseSchema)
 class Cyberware(Item):
@@ -175,8 +189,8 @@ class Weapon(Item):
 class Unit(Stuff):
     p_damage:DamageField = None
     p_armor:str = None
-    p_hp_max:int = None
     p_hp_current:int = None
+    p_hp_max:int = None
 
 @dataclass(base_schema=BaseSchema)
 class Vehicle(Unit):

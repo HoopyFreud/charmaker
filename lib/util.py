@@ -5,6 +5,7 @@ import dice
 import re
 import copy
 import json
+import base64
 import random
 
 #dice roller utility functions - add zero to collapse the result to an int instead of a list
@@ -220,11 +221,11 @@ def getDamageObject(damageField):
 @st.cache_data
 def getJsonObject(objectName):
     with open('jsonDB/'+objectName, encoding='utf-8') as fh:
-        jsonObject = json.load(fh)
+        jsonObject = json.loads(base64.b64decode(fh.read()).decode('utf-8'))
     return jsonObject
     
-stuffDB = {k: processStuff(v) for k,v in getJsonObject("stuffDB.json").items()}
-fieldTableDB = getJsonObject("fieldTables.json")
+stuffDB = {k: processStuff(v) for k,v in getJsonObject("stuffDB").items()}
+fieldTableDB = getJsonObject("fieldTables")
 shortStatTable = fieldTableDB["ShortStatTable"]
 longStatTable = fieldTableDB["StatTable"]
 errTextDB = fieldTableDB["ErrorText"]

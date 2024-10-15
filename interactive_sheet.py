@@ -4,7 +4,8 @@ import lib.state_change as lsc
 import streamlit as st
 
 def dispCharSheet():
-    st.markdown('<h1 class="char_name_header">'+"You are "+st.session_state.PC.pc_name+'</h1>',unsafe_allow_html=True)
+    with st.container(key="char_name_header"):
+        st.title("You are "+st.session_state.PC.pc_name, anchor=False)
     st.divider()
     statList = lu.fieldTableDB["StatTable"]
     with st.container(key="stat_header"):

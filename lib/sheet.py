@@ -53,10 +53,18 @@ def updateChar(fieldType = "All", cacheType = "All"):
 def updateItem(item, itemID, fieldType = "All"):
     if fieldType == "All" or fieldType == "equipped":
         item.p_equipped = st.session_state["i_equipped_"+itemID]
+    if fieldType == "All" or fieldType == "hp_current":
+        item.p_hp_current = st.session_state["i_hp_current_"+itemID]
+    if fieldType == "All" or fieldType == "hp_max":
+        item.p_hp_max = st.session_state["i_hp_max_"+itemID]
     if fieldType == "All" or fieldType == "uses":
         item.p_uses = st.session_state["i_uses_"+itemID]
     if fieldType == "All" or fieldType == "mags":
         item.p_mags = st.session_state["i_mags_"+itemID]
+    if fieldType == "All" or fieldType == "slots":
+        #needs to be assigned first to avoid problems when changing number of max slots
+        item.p_slots = [st.session_state["i_slots_" + itemID + "_" + str(i)] for i in range(item.p_slot_max)]
+        item.p_slot_max = st.session_state["i_slots_"+itemID]
     clearCharCache(cacheType = "Stuff")
     
 def addCacheType(oldType, newType):
@@ -110,13 +118,19 @@ def writeArmor():
             st.write("No equip cost")
         if item.p_desc:
             st.write(item.p_desc)
-        st.write(str(item))
+        if hasattr(item,"p_armor") and item.p_armor is not None:
+            st.write("Damage reduction: " + item.p_armor)
         
-def writeStuff(item, itemCounter = ic):
+def writeStuff(item, itemCounter = ic, prefix = None):
     itemID = str(ic.getNext())
+    if prefix is not None:
+        itemID = prefix + "_" + itemID
     with st.container(border=True):
-        st.subheader(item.p_name, anchor=False)
-        st.write(type(item).__name__)
+        if isinstance(item,lcd.Feature):
+            st.subheader("Feature", anchor=False)
+        else:
+            st.subheader(item.p_name, anchor=False)
+            st.write(type(item).__name__)
         if hasattr(item,"p_equipped"):
             if item.p_equipped is not None:
                 col1, col2 = st.columns([3,1],vertical_alignment="center")
@@ -129,6 +143,26 @@ def writeStuff(item, itemCounter = ic):
                 st.write("No equip cost")
         if hasattr(item,"p_desc") and item.p_desc is not None:
             st.write(item.p_desc)
+        if hasattr(item,"p_feature_text") and item.p_feature_text is not None:
+            st.write("_" + item.p_feature_text + "_")
+        if hasattr(item,"p_hp_max") and item.p_hp_max is not None:
+            subcol1, subcol2, subcol3, subcol4 = st.columns([3,3,1,4],vertical_alignment="center")
+            with subcol1:
+                st.write("HP:")
+            with subcol2:
+                st.session_state["i_hp_current_"+itemID] = item.p_hp_current
+                st.number_input("HP", key="i_hp_current_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"hp_current"}, step=1, min_value=0, label_visibility="collapsed")
+            with subcol3:
+                st.write("/", anchor=False)
+            with subcol4:
+                st.session_state["i_hp_max_"+itemID] = item.p_hp_max
+                st.number_input("HP", key="i_hp_max_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"hp_max"}, step=1, min_value=0, label_visibility="collapsed")
+        if hasattr(item,"p_armor") and item.p_armor is not None:
+            st.write("Armor: " + item.p_armor)
+        if hasattr(item,"p_slot_max") and hasattr(item,"p_slots"):
+            writeCyberdeckSlots(item, itemID)
+        if hasattr(item,"p_pc_desc_text") and item.p_pc_desc_text is not None:
+            st.write("_" + item.p_pc_desc_text + "_")
         if hasattr(item,"p_uses") and item.p_uses is not None:
             col1, col2 = st.columns([1,2.5],vertical_alignment="center")
             with col1:
@@ -146,8 +180,7 @@ def writeStuff(item, itemCounter = ic):
                 st.session_state["i_mags_"+itemID] = item.p_mags
                 st.number_input("Mags", key="i_mags_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"mags"}, step=1, min_value=0, label_visibility="collapsed")
         if hasattr(item,"p_sub_stuff") and item.p_sub_stuff is not None:
-            writeStuff(item.p_sub_stuff,itemCounter = itemCounter.getSubCounter())
-        st.write(str(item))
+            writeStuff(item.p_sub_stuff, itemCounter=itemCounter.getSubCounter(), prefix = itemID)
         
 def writeDamageField(damageField):
     if isinstance(damageField,list):
@@ -170,3 +203,19 @@ def writeDamageField(damageField):
                     st.write(attackString, unsafe_allow_html=True)
                 else:
                     st.write("Attack type: " + firemodeStringDict[damageField.p_firemode], unsafe_allow_html=True)
+                    
+def writeCyberdeckSlots(item, itemID):
+    col1, col2 = st.columns([1,1.5],vertical_alignment="center")
+    with col1:
+        st.write("Max slots:")
+    with col2:
+        st.session_state["i_slots_"+itemID] = item.p_slot_max
+        st.number_input("Slots", key="i_slots_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"slots"}, step=1, min_value=0, label_visibility="collapsed")
+    st.write("Slotted apps:")
+    for i in range(item.p_slot_max):
+        slotKey = "i_slots_" + itemID + "_" + str(i)
+        if len(item.p_slots) > i:
+            st.session_state[slotKey] = item.p_slots[i]
+        else:
+            st.session_state[slotKey] = None
+        st.selectbox("Slot"+str(i), st.session_state.SheetAttributes.appList, index=None, placeholder="No app", format_func=(lambda entry: entry.p_name), key=slotKey, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"slots"}, label_visibility="collapsed")
