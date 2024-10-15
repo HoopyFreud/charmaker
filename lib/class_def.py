@@ -183,7 +183,7 @@ class Drug(Stuff):
 @dataclass(base_schema=BaseSchema)
 class Weapon(Item):
     p_mags:int = None
-    p_damage:DamageField = None
+    p_damage:Union[list[DamageField],DamageField] = None
     
 @dataclass(base_schema=BaseSchema)
 class Unit(Stuff):

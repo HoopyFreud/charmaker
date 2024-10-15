@@ -120,8 +120,12 @@ def writeArmor():
             st.write(item.p_desc)
         if hasattr(item,"p_armor") and item.p_armor is not None:
             st.write("Damage reduction: " + item.p_armor)
+        if item.p_name != "No armor":
+            with st.popover("Delete", use_container_width=True):
+                st.write("Warning: deletion is **permanent**")
+                st.button("Delete", key="del_armor", on_click=deleteItem, args=[item], kwargs={"armor":True}, use_container_width=True)
         
-def writeStuff(item, itemCounter = ic, prefix = None):
+def writeStuff(item, itemCounter = ic, prefix = None, isSubItem = False):
     itemID = str(ic.getNext())
     if prefix is not None:
         itemID = prefix + "_" + itemID
@@ -131,16 +135,17 @@ def writeStuff(item, itemCounter = ic, prefix = None):
         else:
             st.subheader(item.p_name, anchor=False)
             st.write(type(item).__name__)
-        if hasattr(item,"p_equipped"):
-            if item.p_equipped is not None:
-                col1, col2 = st.columns([3,1],vertical_alignment="center")
-                with col1:
-                    st.write("Equipped:")
-                with col2:
-                    st.session_state["i_equipped_"+itemID] = item.p_equipped
-                    st.checkbox("Equipped", key="i_equipped_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"equipped"}, label_visibility="collapsed")
-            else:
-                st.write("No equip cost")
+        if not isSubItem:
+            if hasattr(item,"p_equipped"):
+                if item.p_equipped is not None:
+                    col1, col2 = st.columns([3,1],vertical_alignment="center")
+                    with col1:
+                        st.write("Equipped:")
+                    with col2:
+                        st.session_state["i_equipped_"+itemID] = item.p_equipped
+                        st.checkbox("Equipped", key="i_equipped_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"equipped"}, label_visibility="collapsed")
+                else:
+                    st.write("No equip cost")
         if hasattr(item,"p_desc") and item.p_desc is not None:
             st.write(item.p_desc)
         if hasattr(item,"p_feature_text") and item.p_feature_text is not None:
@@ -180,7 +185,11 @@ def writeStuff(item, itemCounter = ic, prefix = None):
                 st.session_state["i_mags_"+itemID] = item.p_mags
                 st.number_input("Mags", key="i_mags_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"mags"}, step=1, min_value=0, label_visibility="collapsed")
         if hasattr(item,"p_sub_stuff") and item.p_sub_stuff is not None:
-            writeStuff(item.p_sub_stuff, itemCounter=itemCounter.getSubCounter(), prefix = itemID)
+            writeStuff(item.p_sub_stuff, itemCounter=itemCounter.getSubCounter(), prefix = itemID, isSubItem = True)
+        if not isSubItem:
+            with st.popover("Delete", use_container_width=True):
+                st.write("Warning: deletion is **permanent**")
+                st.button("Delete", key="del_"+itemID, on_click=deleteItem, args=[item], use_container_width=True)
         
 def writeDamageField(damageField):
     if isinstance(damageField,list):
@@ -219,3 +228,10 @@ def writeCyberdeckSlots(item, itemID):
         else:
             st.session_state[slotKey] = None
         st.selectbox("Slot"+str(i), st.session_state.SheetAttributes.appList, index=None, placeholder="No app", format_func=(lambda entry: entry.p_name), key=slotKey, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"slots"}, label_visibility="collapsed")
+                    
+def deleteItem(item, armor = False):
+    st.session_state.PC.pc_stuff.remove(item)
+    clearCharCache(cacheType = "Stuff")
+    if armor:
+        st.session_state.c_pc_equipped_armor = st.session_state.SheetAttributes.armorList[0]
+        st.session_state.PC.equipNewArmor(st.session_state.c_pc_equipped_armor)
