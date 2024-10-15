@@ -151,7 +151,7 @@ def writeStuff(item, itemCounter = ic, prefix = None, isSubItem = False):
         if hasattr(item,"p_feature_text") and item.p_feature_text is not None:
             st.write("_" + item.p_feature_text + "_")
         if hasattr(item,"p_hp_max") and item.p_hp_max is not None:
-            subcol1, subcol2, subcol3, subcol4 = st.columns([3,3,1,4],vertical_alignment="center")
+            subcol1, subcol2, subcol3, subcol4 = st.columns([2,3,1,3],vertical_alignment="center")
             with subcol1:
                 st.write("HP:")
             with subcol2:
