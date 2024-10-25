@@ -109,7 +109,9 @@ def appCSS():
         .st-key-secondary_stat_sidebar .st-key-glitch_reset_container {{position: relative;bottom: 1rem}}
         .st-key-desc_box h2 {{padding:0.5rem 0}}
         .st-key-desc_box div[data-testid="stMarkdownContainer"]:has(h2) {{margin-bottom: initial !important}}
-        .st-key-stuff_zone summary p {{padding:0;font-size: 1.25rem !important;font-weight: 400}}
+        .stTabs div[role=tablist] {{justify-content: center;}}
+        .stTabs div[role=tablist] button {{margin:0 auto;}}
+        .stTabs div[role=tablist] button p {{padding:0;font-size: 1rem !important;font-weight: 400}}
         .st-key-attack_type_box p {{margin:0}}
         .stMainBlockContainer {{max-width: 60rem}}
     </style>

@@ -168,48 +168,15 @@ def getUnknownFieldValues(stuffObj,unknownPropList,entryID):
     errKey = getErrKey(entryID)
     errCheck = st.session_state[errKey]
     for propID, prop in enumerate(unknownPropList):
-        propKey = getPropKey(entryID, str(propID))
+        field = prop["Field"]
         if prop["Entry"] == "FixedText":
             fieldValue = prop["Value"]
         else:
+            propKey = getPropKey(entryID, str(propID))
             fieldValue = st.session_state[propKey]
-        if fieldValue is None:
+        if field is None or fieldValue is None or not lu.evalUnknownField(stuffObj,field,fieldValue):
             st.session_state[errKey] = True
             return False
-        if prop["Entry"] != "Dropdown":
-            try:
-                fieldValue = lu.evaluate(lu.statifyString(fieldValue)).item()
-            except:
-                st.session_state[errKey] = True
-                return False
-        match prop["Field"]:
-            case "Name":
-                stuffObj.p_name = fieldValue
-            case "Description":
-                stuffObj.p_desc = fieldValue
-            case "Armor":
-                stuffObj.p_armor = fieldValue
-            case "DescText":
-                stuffObj.p_pc_desc_text = fieldValue
-            case "DamageReduction":
-                stuffObj.p_armor = fieldValue
-            case "FeatureText":
-                stuffObj.p_text = fieldValue
-            case "HP":
-                stuffObj.p_hp_max = fieldValue
-                stuffObj.p_hp_current = fieldValue
-            case "Mags":
-                stuffObj.p_mags = fieldValue
-            case "PropChange":
-                stuffObj.p_prop_change = lcd.PropChangeField(prop["Property"],fieldValue,prop["DispName"],stuffObj.p_name)
-            case "Slots":
-                stuffObj.p_slot_max = fieldValue
-            case "Uses":
-                stuffObj.p_uses = fieldValue
-            case _:
-                st.write("Unknown field value: "+prop["Field"])
-                st.session_state[errKey] = True
-                return False
     return True
             
 #process all stuff in each class table
@@ -375,7 +342,7 @@ def writeChildStuff(stuff, entryID, customStuffTable):
         if customStuffTable:
             dropdownTable = customStuffTable
         else:
-            dropdownTable = stuffTableDB[stuff.p_data["RandomTable"]]
+            dropdownTable = lu.stuffTableDB[stuff.p_data["RandomTable"]]
         #restrict the table range based on the roll parameter if one exists
         if ("Roll" in stuff.p_data.keys() or "RollProp" in stuff.p_data.keys()):
             rollString = stuff.p_data["Roll"] if "Roll" in stuff.p_data.keys() else st.session_state.class_table[stuff.p_data["RollProp"]]
@@ -450,7 +417,4 @@ def getClassObject(tableName: str):
     return classDict
     
 mapClassTable = lu.fieldTableDB["ClassTableDict"]
-stuffTableDB = lu.getJsonObject("stuffTables")
-for table in list(stuffTableDB.keys()):
-    stuffTableDB[table] = {k: lu.processStuff(v) for k,v in stuffTableDB[table].items()}
 wordTableDB = lu.getJsonObject("wordTables")

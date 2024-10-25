@@ -1,6 +1,7 @@
 import lib.util as lu
 import lib.sheet as ls
 import lib.state_change as lsc
+import lib.class_def as lcd
 import streamlit as st
 
 def dispCharSheet():
@@ -147,14 +148,39 @@ def dispCharSheet():
             ls.writeStuffDesc()
             ls.writeFeatures()
     st.divider()
-    ls.ic.reset()
-    with st.container(key="stuff_zone"):
+    itemCounter = lcd.ItemCounter()
+    tabList = [["Armor and weapons"]]
+    if st.session_state.SheetAttributes.itemList:
+        tabList.append(["Items",st.session_state.SheetAttributes.itemList])
+    if st.session_state.SheetAttributes.cyberwareList:
+        tabList.append(["Cyberware",st.session_state.SheetAttributes.cyberwareList])
+    if st.session_state.SheetAttributes.appList:
+        tabList.append(["Apps",st.session_state.SheetAttributes.appList])
+    if st.session_state.SheetAttributes.nanoInfestationList:
+        tabList.append(["Nano Powers and Infestations",st.session_state.SheetAttributes.nanoInfestationList])
+    if st.session_state.SheetAttributes.unitList:
+        tabList.append(["Units and Vehicles",st.session_state.SheetAttributes.unitList])
+    tabList.append(["Add Item"])
+    tabHolder = st.tabs([tabEntry[0] for tabEntry in tabList])
+    with tabHolder[0]:
         #Armor and weapons
-        with st.expander("Armor and weapons"):
-            col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
-            with col1:
-                ls.writeArmor()
-            for itemIndex,item in enumerate(st.session_state.SheetAttributes.weaponList, start=1):
+        col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
+        with col1:
+            ls.writeArmor()
+        for itemIndex,item in enumerate(st.session_state.SheetAttributes.weaponList, start=1):
+            if itemIndex%3 == 0:
+                col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
+                column = col1
+            elif itemIndex%3 == 1:
+                column = col2
+            else:
+                column = col3
+            with column:
+                ls.writeStuff(item, itemCounter)
+    for tabIndex,tab in enumerate(tabHolder[1:-1],start=1):
+        itemList = tabList[tabIndex][1]
+        with tab:
+            for itemIndex,item in enumerate(itemList):
                 if itemIndex%3 == 0:
                     col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
                     column = col1
@@ -163,69 +189,6 @@ def dispCharSheet():
                 else:
                     column = col3
                 with column:
-                    ls.writeStuff(item)
-        #Items
-        if st.session_state.SheetAttributes.itemList:
-            with st.expander("Items"):
-                for itemIndex,item in enumerate(st.session_state.SheetAttributes.itemList):
-                    if itemIndex%3 == 0:
-                        col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
-                        column = col1
-                    elif itemIndex%3 == 1:
-                        column = col2
-                    else:
-                        column = col3
-                    with column:
-                        ls.writeStuff(item)
-        #Cyberware
-        if st.session_state.SheetAttributes.cyberwareList:
-            with st.expander("Cyberware"):
-                for itemIndex,item in enumerate(st.session_state.SheetAttributes.cyberwareList):
-                    if itemIndex%3 == 0:
-                        col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
-                        column = col1
-                    elif itemIndex%3 == 1:
-                        column = col2
-                    else:
-                        column = col3
-                    with column:
-                        ls.writeStuff(item)
-        #Apps
-        if st.session_state.SheetAttributes.appList:
-            with st.expander("Apps"):
-                for itemIndex,item in enumerate(st.session_state.SheetAttributes.appList):
-                    if itemIndex%3 == 0:
-                        col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
-                        column = col1
-                    elif itemIndex%3 == 1:
-                        column = col2
-                    else:
-                        column = col3
-                    with column:
-                        ls.writeStuff(item)
-        #Nanos and infestations
-        if st.session_state.SheetAttributes.nanoInfestationList:
-            with st.expander("Nano powers and infestations"):
-                for itemIndex,item in enumerate(st.session_state.SheetAttributes.nanoInfestationList):
-                    if itemIndex%3 == 0:
-                        col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
-                        column = col1
-                    elif itemIndex%3 == 1:
-                        column = col2
-                    else:
-                        column = col3
-                    with column:
-                        ls.writeStuff(item)
-        #Units
-        if st.session_state.SheetAttributes.unitList:
-            with st.expander("Units and vehicles"):
-                for itemIndex,item in enumerate(st.session_state.SheetAttributes.unitList):
-                    if itemIndex%3 == 0:
-                        col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
-                        column = col1
-                    elif itemIndex%3 == 1:
-                        column = col2
-                    else:
-                        column = col3
-                    with column:
-                        ls.writeStuff(item)
+                    ls.writeStuff(item, itemCounter)
+    with tabHolder[-1]:
+        ls.writeAddItem(itemCounter)

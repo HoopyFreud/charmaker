@@ -21,7 +21,7 @@ with col2:
 with col3:
     with st.popover('Load Character', use_container_width=True):
         with st.form('load-char-form', clear_on_submit=True, border=False):
-            uploadedChar = st.file_uploader("Upload file", key="file_uploader_value", label_visibility="collapsed")
+            st.file_uploader("Upload file", key="file_uploader_value", label_visibility="collapsed")
             st.form_submit_button("Load", on_click=lsc.processCharUpload, use_container_width=True)
             
 if st.session_state.stage > 0:

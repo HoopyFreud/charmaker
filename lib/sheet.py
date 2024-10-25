@@ -1,28 +1,24 @@
 import lib.util as lu
 import lib.class_def as lcd
 import streamlit as st
+import re
+import copy
         
-ic = lcd.ItemCounter()
 firemodeStringDict = {"melee":"Melee<br />(+ Strength)","throw":"Thrown<br />(+ Strength)","single":"Single-shot<br />(+ Presence)","auto":"Autofire<br />(+ Agility)","remote":"Remote control<br />(+ Knowledge)"}
+stuffTypeList = ["Ammo","App","Armor","Cyberdeck","Cyberware","Drug","Infestation","Item","Nano","Unit","Vehicle","Weapon"]
 
 def clearCharCache(cacheType = "All"):
-    saveToJson.clear()
     if cacheType == "All" or cacheType == "Stuff" or (isinstance(cacheType,list) and "Stuff" in cacheType):
         st.session_state.SheetAttributes.updateStuff(st.session_state.PC.pc_stuff)
-        getFlatStuffList.clear()
-        getCarryWeight.clear()
     
-@st.cache_data
 def saveToJson():
     if "PC" in st.session_state:
         return lcd.PC.Schema().dumps(st.session_state.PC)
     return None
     
-@st.cache_resource
 def getFlatStuffList(): 
     return st.session_state.SheetAttributes.flatStuffList
     
-@st.cache_resource
 def getCarryWeight(): 
     return str(st.session_state.SheetAttributes.currentCarry)
 
@@ -125,17 +121,17 @@ def writeArmor():
                 st.write("Warning: deletion is **permanent**")
                 st.button("Delete", key="del_armor", on_click=deleteItem, args=[item], kwargs={"armor":True}, use_container_width=True)
         
-def writeStuff(item, itemCounter = ic, prefix = None, isSubItem = False):
-    itemID = str(ic.getNext())
+def writeStuff(item, itemCounter, prefix = None, invManagement = True, useBorder = True):
+    itemID = str(itemCounter.getNext())
     if prefix is not None:
         itemID = prefix + "_" + itemID
-    with st.container(border=True):
+    with st.container(border=useBorder):
         if isinstance(item,lcd.Feature):
             st.subheader("Feature", anchor=False)
         else:
             st.subheader(item.p_name, anchor=False)
             st.write(type(item).__name__)
-        if not isSubItem:
+        if invManagement:
             if hasattr(item,"p_equipped"):
                 if item.p_equipped is not None:
                     col1, col2 = st.columns([3,1],vertical_alignment="center")
@@ -158,7 +154,7 @@ def writeStuff(item, itemCounter = ic, prefix = None, isSubItem = False):
                 st.session_state["i_hp_current_"+itemID] = item.p_hp_current
                 st.number_input("HP", key="i_hp_current_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"hp_current"}, step=1, min_value=0, label_visibility="collapsed")
             with subcol3:
-                st.write("/", anchor=False)
+                st.write("/")
             with subcol4:
                 st.session_state["i_hp_max_"+itemID] = item.p_hp_max
                 st.number_input("HP", key="i_hp_max_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"hp_max"}, step=1, min_value=0, label_visibility="collapsed")
@@ -185,8 +181,13 @@ def writeStuff(item, itemCounter = ic, prefix = None, isSubItem = False):
                 st.session_state["i_mags_"+itemID] = item.p_mags
                 st.number_input("Mags", key="i_mags_"+itemID, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"mags"}, step=1, min_value=0, label_visibility="collapsed")
         if hasattr(item,"p_sub_stuff") and item.p_sub_stuff is not None:
-            writeStuff(item.p_sub_stuff, itemCounter=itemCounter.getSubCounter(), prefix = itemID, isSubItem = True)
-        if not isSubItem:
+            itemCounter.getSubCounter().reset()
+            if isinstance(item.p_sub_stuff,list):
+                for subStuffItem in item.p_sub_stuff:
+                    writeStuff(subStuffItem, itemCounter.getSubCounter(), prefix = itemID, invManagement = False)
+            else:
+                writeStuff(item.p_sub_stuff, itemCounter.getSubCounter(), prefix = itemID, invManagement = False)
+        if invManagement:
             with st.popover("Delete", use_container_width=True):
                 st.write("Warning: deletion is **permanent**")
                 st.button("Delete", key="del_"+itemID, on_click=deleteItem, args=[item], use_container_width=True)
@@ -228,6 +229,119 @@ def writeCyberdeckSlots(item, itemID):
         else:
             st.session_state[slotKey] = None
         st.selectbox("Slot"+str(i), st.session_state.SheetAttributes.appList, index=None, placeholder="No app", format_func=(lambda entry: entry.p_name), key=slotKey, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"slots"}, label_visibility="collapsed")
+        
+def writeAddItem(itemCounter):
+    st.subheader("Item type", anchor=False)
+    stuffType = st.selectbox("Item type", stuffTypeList, index=None, key="t_add_item_type", on_change=resetAddItem, kwargs={"stage":1}, label_visibility="collapsed")
+    #itemList = list(filter(lambda entry:entry.p_type==stuffType,lu.stuffDB.values())) + [lcd.getCustomStuffField(stuffType)]
+    itemList = list(filter(lambda entry:entry.p_type==stuffType,lu.stuffDB.values()))
+    if stuffType=="Armor":
+        itemList = [itemEntry for itemEntry in itemList if itemEntry.p_name != "No armor"]
+    if stuffType is not None:
+        st.subheader("Item", anchor=False)
+        selectItem = st.selectbox("Add item", itemList, index=None, format_func=lambda entry:entry.p_name, key="t_add_item_entry", on_change=resetAddItem, kwargs={"stage":2}, disabled=(stuffType is None), label_visibility="collapsed")
+        if selectItem is not None:
+            if "add_obj" not in st.session_state or st.session_state.add_obj is None:
+                st.session_state.add_obj = convertAndProcessFieldObj(selectItem)
+            col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
+            with col2:
+                with st.container(border=True):
+                    disableAdd = False
+                    writeStuff(st.session_state.add_obj, itemCounter, invManagement = False, useBorder = False)
+                    if "SubStuff" in selectItem.p_data.keys():
+                        prevCount = itemCounter.getNext() - 1
+                        itemCounter.reset(resetVal = prevCount)
+                        prevCount = str(prevCount)
+                        disableAdd = writeAddSubStuff(selectItem, itemCounter.getSubCounter(), prevCount)
+                    st.button("Add", key="add_new_item", on_click=addNewItem, disabled=disableAdd, use_container_width=True)
+                
+def convertAndProcessFieldObj(stuffFieldObj):
+    selectObj,_ = lu.generateObjectFromStuffField(stuffFieldObj)
+    if "Unknown" in stuffFieldObj.p_data.keys():
+        for prop in stuffFieldObj.p_data["Unknown"]:
+            lu.evalUnknownField(selectObj,prop["Field"],prop["Value"])
+    return selectObj
+    
+def writeAddSubStuff(selectItem, itemCounter, prefix):
+    disableAdd = False
+    subStuff = selectItem.p_data["SubStuff"]
+    if isinstance(subStuff,list):
+        for subStuffItem in subStuff:
+            disableAdd = disableAdd or writeAddSubStuff(subStuffItem, itemCounter, prefix)
+    else:
+        itemID = itemCounter.getNext()
+        itemCounter.reset(resetVal = itemID)
+        itemID = str(itemID)
+        itemID = prefix + "_" + itemID
+        objKey = "add_sub_obj_" + itemID
+        if subStuff.p_type == "RandomItem":
+            dropdownKey = "t_add_sub_item_" + itemID
+            dropdownTable = lu.stuffTableDB[subStuff.p_data["RandomTable"]]
+            if "Roll" in subStuff.p_data.keys():
+                rollString = stuff.p_data["Roll"]
+                dropdownTable = {k: v for k,v in dropdownTable.items() if int(k) in range(lu.rollMin(rollString),lu.rollMax(rollString)+1)}
+            dropdownList = list(dropdownTable.values())
+            rollString = "1d"+str(len(dropdownList))
+            st.subheader(subStuff.p_name, anchor=False)
+            selectSubStuff = st.selectbox(subStuff.p_name, dropdownList, format_func=(lambda entry: str(dropdownList.index(entry)+1)+" - "+entry.p_name), key=dropdownKey, index=None, placeholder=rollString, on_change=resetAddItem, kwargs={"itemID":itemID}, label_visibility="collapsed")
+            st.button('Random', key=dropdownKey+"_random", on_click=chooseNewAddItemDropdown, args=[dropdownList, dropdownKey, itemID], use_container_width=True)
+            subStuff = selectSubStuff
+            if subStuff is None:
+                return True
+        if objKey not in st.session_state or st.session_state[objKey] is None:
+            st.session_state[objKey] = convertAndProcessFieldObj(subStuff)
+        writeStuff(st.session_state[objKey], itemCounter, prefix = prefix, invManagement = False)
+        if "SubStuff" in subStuff.p_data.keys():
+            itemCounter.getSubCounter().reset()
+            disableAdd = writeAddSubStuff(subStuff, itemCounter.getSubCounter(), itemID)
+    return disableAdd
+    
+def chooseNewAddItemDropdown(dropdownList, dropdownKey, itemID):
+    resetAddItem(itemID=itemID)
+    lu.randomSelector(dropdownKey, dropdownList)
+    
+def resetAddItem(stage = 3, itemID = None):
+    for key in st.session_state.keys():
+        if (
+            (key=="t_add_item_type" and stage < 1) or 
+            (key=="t_add_item_entry" and stage < 2) or 
+            (stage < 3 and (
+                key=="add_obj" or
+                key.startswith("t_add_sub_item_") or
+                key.startswith("add_sub_obj_")
+            )) or
+            (itemID is not None and key.startswith("add_sub_obj_" + itemID))
+        ):
+            st.session_state[key] = None
+            
+def addNewItem():
+    if "add_obj" in st.session_state and st.session_state.add_obj is not None:
+        newItemObject = copy.deepcopy(st.session_state.add_obj)
+        subObjKeyList = [key for key in st.session_state.keys() if key.startswith("add_sub_obj_")]
+        newItemObject.p_sub_stuff = recursiveSubStuffBuilder(subObjKeyList)
+        st.session_state.PC.pc_stuff.append(newItemObject)
+        resetAddItem(stage=0)
+        clearCharCache(cacheType = "Stuff")
+        
+def recursiveSubStuffBuilder(keyList, keyRoot = None):
+    if keyRoot is None:
+        reFilterExp = re.compile("add_sub_obj_\d+_\d+")
+    else:
+        reFilterExp = re.compile(keyRoot + "_\d+")
+    filterList = [key for key in keyList if reFilterExp.fullmatch(key) and st.session_state[key] is not None]
+    if filterList:
+        if len(filterList) == 1:
+            filterKey = filterList[0]
+            returnObject = copy.deepcopy(st.session_state[filterKey])
+            returnObject.p_sub_stuff = recursiveSubStuffBuilder(keyList, keyRoot=filterKey)
+            return returnObject
+        else:
+            returnList = []
+            for filterKey in filterList:
+                returnList.append(recursiveSubStuffBuilder(keyList, keyRoot=filterKey))
+            return returnList
+    return None
+                
                     
 def deleteItem(item, armor = False):
     st.session_state.PC.pc_stuff.remove(item)

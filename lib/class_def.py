@@ -160,7 +160,7 @@ class Item(Stuff):
     p_equipped:BoolOrNoneType = True
     
 @dataclass(base_schema=BaseSchema)    
-class Ammo(Stuff):
+class Ammo(Item):
     pass
     
 @dataclass(base_schema=BaseSchema)
@@ -177,7 +177,7 @@ class Cyberware(Item):
     p_pc_desc_text:str = None
     
 @dataclass(base_schema=BaseSchema)    
-class Drug(Stuff):
+class Drug(Item):
     pass
     
 @dataclass(base_schema=BaseSchema)
@@ -245,30 +245,30 @@ class SheetAttributes():
         self.cyberwareList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Cyberware)]
             
     def updateItemList(self):
-        self.itemList = [stuffItem for stuffItem in self.stuff if issubclass(type(stuffItem),Item) and not isinstance(stuffItem,Armor) and not isinstance(stuffItem,Weapon) and not isinstance(stuffItem,Cyberware)]
+        self.itemList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Item) and (not isinstance(stuffItem,Armor)) and (not isinstance(stuffItem,Weapon)) and (not isinstance(stuffItem,Cyberware))]
         self.itemList.sort(key = lambda item: str(type(item)))
             
     def updateNanoInfestationList(self):
         self.nanoInfestationList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Nano) or isinstance(stuffItem,Infestation)]
             
     def updateUnitList(self):
-        self.unitList = [stuffItem for stuffItem in self.stuff if issubclass(type(stuffItem),Unit)]
+        self.unitList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Unit)]
             
     def updateWeaponList(self):
         self.weaponList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Weapon)]
         
     def updateCurrentCarry(self):
-        self.currentCarry = sum(1 for item in self.stuff if issubclass(type(item),Item) and item.p_equipped and not isinstance(item,Cyberware))
+        self.currentCarry = sum(1 for stuffItem in self.stuff if isinstance(stuffItem,Item) and stuffItem.p_equipped and not isinstance(stuffItem,Cyberware))
         
     def updatePropChangeList(self):
         self.propChangeList = []
         for item in self.flatStuffList:
-            if issubclass(type(item),Stuff) and item.p_prop_change is not None:
+            if isinstance(item,Stuff) and item.p_prop_change is not None:
                 self.propChangeList.append(item.p_prop_change)
             
     def recursiveListFlatten(self,inItem):
         self.flatStuffList.append(inItem)
-        if issubclass(type(inItem),Stuff) and inItem.p_sub_stuff is not None:
+        if isinstance(inItem,Stuff) and inItem.p_sub_stuff is not None:
             self.recursiveListFlatten(inItem.p_sub_stuff)
             
     def updateFlatStuffList(self):
@@ -279,13 +279,16 @@ class SheetAttributes():
 
 def getEmptyRandomItem():
     return StuffField("RandomItem", None, {})
+
+def getCustomStuffField(stuffType):
+    return StuffField(stuffType, "Custom", {})
     
 class ItemCounter():
     def __init__(self):
         self.subCounter = None
         self.reset()
-    def reset(self):
-        self.c = itertools.count()
+    def reset(self, resetVal = 0):
+        self.c = itertools.count(start = resetVal)
         if self.subCounter is not None:
             self.subCounter.reset()
     def getNext(self):

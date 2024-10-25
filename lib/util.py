@@ -201,6 +201,49 @@ def generateObjectFromStuffField(stuff):
     if "Uses" in stuff.p_data.keys():
         stuffObj.p_uses = stuff.p_data["Uses"]
     return stuffObj, extraData
+    
+def evalUnknownField(stuffObj, field, fieldValue):
+    intCast = False
+    reqInt = False
+    try:
+        if not isinstance(fieldValue,int):
+            fieldValue = evaluate(statifyString(fieldValue)).item()
+        intCast = True
+    except:
+        pass
+    match field:
+        case "Name":
+            stuffObj.p_name = fieldValue
+        case "Description":
+            stuffObj.p_desc = fieldValue
+        case "Armor":
+            stuffObj.p_armor = fieldValue
+        case "DescText":
+            stuffObj.p_pc_desc_text = fieldValue
+        case "DamageReduction":
+            stuffObj.p_armor = fieldValue
+        case "FeatureText":
+            stuffObj.p_text = fieldValue
+        case "HP":
+            stuffObj.p_hp_max = fieldValue
+            stuffObj.p_hp_current = fieldValue
+            reqInt = True
+        case "Mags":
+            stuffObj.p_mags = fieldValue
+            reqInt = True
+        case "PropChange":
+            stuffObj.p_prop_change = lcd.PropChangeField(prop["Property"],fieldValue,prop["DispName"],stuffObj.p_name)
+            reqInt = True
+        case "Slots":
+            stuffObj.p_slot_max = fieldValue
+            reqInt = True
+        case "Uses":
+            stuffObj.p_uses = fieldValue
+            reqInt = True
+        case _:
+            st.write("Unknown field value: "+prop["Field"])
+            return False
+    return not intCast ^ reqInt
         
 def getDamageObject(damageField):
     if isinstance(damageField,list):
@@ -225,6 +268,9 @@ def getJsonObject(objectName):
     return jsonObject
     
 stuffDB = {k: processStuff(v) for k,v in getJsonObject("stuffDB").items()}
+stuffTableDB = getJsonObject("stuffTables")
+for table in list(stuffTableDB.keys()):
+    stuffTableDB[table] = {k: processStuff(v) for k,v in stuffTableDB[table].items()}
 fieldTableDB = getJsonObject("fieldTables")
 shortStatTable = fieldTableDB["ShortStatTable"]
 longStatTable = fieldTableDB["StatTable"]
