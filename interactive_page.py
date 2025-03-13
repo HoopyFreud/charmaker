@@ -9,7 +9,7 @@ lsup.appSetupKeys()
 lsup.appUpdatePCStateKeys()
 lsup.appCSS()
 
-#st.write(st.session_state)
+st.write(st.session_state)
     
 char_export_json = ls.saveToJson()
 

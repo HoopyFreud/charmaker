@@ -245,7 +245,7 @@ class SheetAttributes():
         self.cyberwareList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Cyberware)]
             
     def updateItemList(self):
-        self.itemList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Item) and (not isinstance(stuffItem,Armor)) and (not isinstance(stuffItem,Weapon)) and (not isinstance(stuffItem,Cyberware))]
+        self.itemList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Item) and (not isinstance(stuffItem,Armor)) and (not isinstance(stuffItem,Ammo)) and (not isinstance(stuffItem,Weapon)) and (not isinstance(stuffItem,Cyberware))]
         self.itemList.sort(key = lambda item: str(type(item)))
             
     def updateNanoInfestationList(self):
@@ -255,7 +255,7 @@ class SheetAttributes():
         self.unitList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Unit)]
             
     def updateWeaponList(self):
-        self.weaponList = [stuffItem for stuffItem in self.stuff if isinstance(stuffItem,Weapon)]
+        self.weaponList = [stuffItem for stuffItem in self.stuff if (isinstance(stuffItem,Weapon) or isinstance(stuffItem,Ammo))]
         
     def updateCurrentCarry(self):
         self.currentCarry = sum(1 for stuffItem in self.stuff if isinstance(stuffItem,Item) and stuffItem.p_equipped and not isinstance(stuffItem,Cyberware))

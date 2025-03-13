@@ -230,31 +230,60 @@ def writeCyberdeckSlots(item, itemID):
             st.session_state[slotKey] = None
         st.selectbox("Slot"+str(i), st.session_state.SheetAttributes.appList, index=None, placeholder="No app", format_func=(lambda entry: entry.p_name), key=slotKey, on_change=updateItem, args=[item,itemID], kwargs={"fieldType":"slots"}, label_visibility="collapsed")
         
-def writeAddItem(itemCounter):
+def writeAddItem(itemCounter, suffix=""):
     st.subheader("Item type", anchor=False)
-    stuffType = st.selectbox("Item type", stuffTypeList, index=None, key="t_add_item_type", on_change=resetAddItem, kwargs={"stage":1}, label_visibility="collapsed")
+    stuffType = st.selectbox("Item type", stuffTypeList, index=None, key="t_add_item_type"+suffix, on_change=resetAddItem, kwargs={"stage":1}, label_visibility="collapsed")
     #itemList = list(filter(lambda entry:entry.p_type==stuffType,lu.stuffDB.values())) + [lcd.getCustomStuffField(stuffType)]
-    itemList = list(filter(lambda entry:entry.p_type==stuffType,lu.stuffDB.values()))
+    itemList = list(filter(lambda entry:entry.p_type==stuffType,lu.stuffDB.values())) + [lcd.getCustomStuffField(stuffType)]
     if stuffType=="Armor":
         itemList = [itemEntry for itemEntry in itemList if itemEntry.p_name != "No armor"]
     if stuffType is not None:
         st.subheader("Item", anchor=False)
-        selectItem = st.selectbox("Add item", itemList, index=None, format_func=lambda entry:entry.p_name, key="t_add_item_entry", on_change=resetAddItem, kwargs={"stage":2}, disabled=(stuffType is None), label_visibility="collapsed")
+        selectItem = st.selectbox("Add item", itemList, index=None, format_func=lambda entry:entry.p_name, key="t_add_item_entry"+suffix, on_change=resetAddItem, kwargs={"stage":2}, disabled=(stuffType is None), label_visibility="collapsed")
         if selectItem is not None:
             if "add_obj" not in st.session_state or st.session_state.add_obj is None:
                 st.session_state.add_obj = convertAndProcessFieldObj(selectItem)
-            col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
-            with col2:
-                with st.container(border=True):
-                    disableAdd = False
-                    writeStuff(st.session_state.add_obj, itemCounter, invManagement = False, useBorder = False)
-                    if "SubStuff" in selectItem.p_data.keys():
-                        prevCount = itemCounter.getNext() - 1
-                        itemCounter.reset(resetVal = prevCount)
-                        prevCount = str(prevCount)
-                        disableAdd = writeAddSubStuff(selectItem, itemCounter.getSubCounter(), prevCount)
-                    st.button("Add", key="add_new_item", on_click=addNewItem, disabled=disableAdd, use_container_width=True)
+            if selectItem.p_name is "Custom":
+                st.divider()
+                for prop in vars(st.session_state.add_obj):
+                    if prop in lu.objectFieldDict:
+                        propname = lu.objectFieldDict[prop]
+                        col1, col2 = st.columns([1,1.5],vertical_alignment="center")
+                        with col1:
+                            st.write(propname)
+                        with col2:
+                            keyID = "c_custom_add_item_"+prop+suffix
+                            if prop in ["p_name", "p_desc", "p_pc_desc_text", "p_armor"]:
+                                st.text_input(propname, key=keyID, on_change=updateCustomAddItemField, args=[prop,keyID], value=None, label_visibility="collapsed")
+                            elif prop in ["p_uses", "p_slot_max", "p_mags", "p_hp_max"]:
+                                st.number_input(propname, key=keyID, on_change=updateCustomAddItemField, args=[prop,keyID], min_value=0, value=None, step=1, label_visibility="collapsed")
+                col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
+                with col2:
+                    with st.container(border=True):
+                        disableAdd = False
+                        writeStuff(st.session_state.add_obj, itemCounter, invManagement = False, useBorder = False)
+                        if "SubStuff" in selectItem.p_data.keys():
+                            prevCount = itemCounter.getNext() - 1
+                            itemCounter.reset(resetVal = prevCount)
+                            prevCount = str(prevCount)
+                            disableAdd = writeAddSubStuff(selectItem, itemCounter.getSubCounter(), prevCount)
+                        st.button("Add", key="add_new_item", on_click=addNewItem, disabled=disableAdd, use_container_width=True)
+            else:
+                col1, col2, col3 = st.columns([1,1,1],vertical_alignment="top")
+                with col2:
+                    with st.container(border=True):
+                        disableAdd = False
+                        writeStuff(st.session_state.add_obj, itemCounter, invManagement = False, useBorder = False)
+                        if "SubStuff" in selectItem.p_data.keys():
+                            prevCount = itemCounter.getNext() - 1
+                            itemCounter.reset(resetVal = prevCount)
+                            prevCount = str(prevCount)
+                            disableAdd = writeAddSubStuff(selectItem, itemCounter.getSubCounter(), prevCount)
+                        st.button("Add", key="add_new_item", on_click=addNewItem, disabled=disableAdd, use_container_width=True)
                 
+def updateCustomAddItemField(field,key):
+    setattr(st.session_state.add_obj,field,st.session_state[key])
+    
 def convertAndProcessFieldObj(stuffFieldObj):
     selectObj,_ = lu.generateObjectFromStuffField(stuffFieldObj)
     if "Unknown" in stuffFieldObj.p_data.keys():

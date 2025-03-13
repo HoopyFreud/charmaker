@@ -267,6 +267,9 @@ def getJsonObject(objectName):
         jsonObject = json.loads(base64.b64decode(fh.read()).decode('utf-8'))
     return jsonObject
     
+objectFieldDict = {"p_name": "Name","p_desc": "Description","p_sub_stuff": "Included item","p_prop_change": "Stat change","p_damage": "Damage","p_pc_desc_text": "Description text","p_uses": "Uses","p_equipped": "Equipped","p_armor": "Armor","p_slot_max": "Max slots","p_mags": "Mags","p_hp_max": "HP"}
+damageFieldDict = {"p_damage": "Damage","p_desc": "Description","p_firemode": "Fire mode", "p_mech_bonus": "Deals double damage to mechanical targets"}
+    
 stuffDB = {k: processStuff(v) for k,v in getJsonObject("stuffDB").items()}
 stuffTableDB = getJsonObject("stuffTables")
 for table in list(stuffTableDB.keys()):
